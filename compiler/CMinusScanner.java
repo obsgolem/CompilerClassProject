@@ -35,14 +35,6 @@ public class CMinusScanner implements Scanner {
 		DONE,
 	}
 
-	private Boolean isNum(int c) {
-		return ((char) c) >= '0' && ((char) c) <= '9';
-	}
-
-	private Boolean isLetter(int c) {
-		return (((char) c) >= 'a' && ((char) c) <= 'z') || (((char) c) >= 'A' && ((char) c) <= 'Z');
-	}
-
 	private Token scanToken() throws ScannerException {
 		Token.TokenType type;
 		String data = null;
@@ -59,6 +51,7 @@ public class CMinusScanner implements Scanner {
 			switch(state) {
 				case State.START: {
 					if(c == -1) {
+						save = false;
 						type = Token.TokenType.EOF;
 						state = State.DONE;
 					}
@@ -70,6 +63,94 @@ public class CMinusScanner implements Scanner {
 					}
 					else if(Character.isWhitespace(c)) {
 						save = false;
+					}
+					else {
+						save = false;
+
+						switch((char) c) {
+							case '+': {
+								type = Token.TokenType.PLUS;
+								state = State.DONE;
+							} break;
+
+							case '-': {
+								type = Token.TokenType.MINUS;
+								state = State.DONE;
+							} break;
+
+							case '*': {
+								type = Token.TokenType.MULT;
+								state = State.DONE;
+							} break;
+
+							case '/': {
+								type = Token.TokenType.DIV;
+								state = State.DONE;
+							} break;
+
+							case '>': {
+								type = Token.TokenType.LESS;
+								state = State.GOT_LESS;
+							} break;
+
+							case '<': {
+								type = Token.TokenType.GREATER;
+								state = State.GOT_GREATER;
+							} break;
+
+							case '!': {
+								state = State.GOT_NOT;
+							} break;
+
+							case '=': {
+								type = Token.TokenType.ASSIGN;
+								state = State.GOT_EQUAL;
+							} break;
+
+							case ';': {
+								type = Token.TokenType.SEMI;
+								state = State.DONE;
+							} break;
+
+							case ',': {
+								type = Token.TokenType.COMMA;
+								state = State.DONE;
+							} break;
+
+							case '{': {
+								type = Token.TokenType.LCURLY;
+								state = State.DONE;
+							} break;
+
+							case '}': {
+								type = Token.TokenType.RCURLY;
+								state = State.DONE;
+							} break;
+
+							case '(': {
+								type = Token.TokenType.LPAREN;
+								state = State.DONE;
+							} break;
+
+							case ')': {
+								type = Token.TokenType.RPAREN;
+								state = State.DONE;
+							} break;
+
+							case '[': {
+								type = Token.TokenType.LSQUARE;
+								state = State.DONE;
+							} break;
+
+							case ']': {
+								type = Token.TokenType.RSQUARE;
+								state = State.DONE;
+							} break;
+
+							default: {
+								throw new ScannerException("Invalid character in file.");
+							}
+						}
 					}
 				} break;
 
@@ -88,6 +169,40 @@ public class CMinusScanner implements Scanner {
 						type = Token.TokenType.IDENT;
 						save = false;
 						state = state.DONE;
+					}
+				} break;
+
+				case State.GOT_NOT: {
+					save = false;
+
+					if((char) c != '=') {
+						throw new ScannerException("Invalid token: !, expected !=.");
+					}
+
+					type = Token.TokenType.NEQUAL;
+				} break;
+
+				case State.GOT_LESS: {
+					save = false;
+
+					if((char) c == '=') {
+						type = Token.TokenType.LEQUAL;
+					}
+				} break;
+
+				case State.GOT_GREATER: {
+					save = false;
+
+					if((char) c == '=') {
+						type = Token.TokenType.GREQUAL;
+					}
+				} break;
+
+				case State.GOT_EQUAL: {
+					save = false;
+
+					if((char) c == '=') {
+						type = Token.TokenType.EQUAL;
 					}
 				} break;
 
