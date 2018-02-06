@@ -2,21 +2,18 @@ package compiler;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 
 public class CMinusScanner implements Scanner {
 	private BufferedReader input;
 	private Token next_token;
 
-	public class ScannerException extends Exception {
-
-	}
-
-	public CMinusScanner(BufferedReader file) {
+	public CMinusScanner(BufferedReader file) throws ScannerException, IOException {
 		input = file;
 		next_token = scanToken();
 	}
 
-	public Token getNextToken() throws ScannerException {
+	public Token getNextToken() throws ScannerException, IOException {
 		Token out = next_token;
 		if(next_token.getType() != Token.TokenType.EOF) {
 			next_token = scanToken();
@@ -42,8 +39,8 @@ public class CMinusScanner implements Scanner {
 		DONE,
 	}
 
-	private Token scanToken() throws ScannerException {
-		Token.TokenType type;
+	private Token scanToken() throws ScannerException, IOException {
+		Token.TokenType type = Token.TokenType.IDENT;
 		String data = null;
 
 		State state = State.START;
@@ -56,7 +53,7 @@ public class CMinusScanner implements Scanner {
 			Boolean save = true;
 
 			switch(state) {
-				case State.START: {
+				case START: {
 					if(c == -1) {
 						save = false;
 						type = Token.TokenType.EOF;
@@ -161,7 +158,7 @@ public class CMinusScanner implements Scanner {
 					}
 				} break;
 
-				case State.DOING_NUMBER: {
+				case DOING_NUMBER: {
 					if(!Character.isDigit(c)) {
 						if(Character.isLetter(c))
 						{
@@ -174,7 +171,7 @@ public class CMinusScanner implements Scanner {
 					}
 				} break;
 
-				case State.DOING_IDENT_OR_KEYWORD: {
+				case DOING_IDENT_OR_KEYWORD: {
 					if(!Character.isLetter(c)) {
 						if(Character.isDigit(c))
 						{
@@ -187,7 +184,7 @@ public class CMinusScanner implements Scanner {
 					}
 				} break;
 
-				case State.GOT_NOT: {
+				case GOT_NOT: {
 					save = false;
 
 					if((char) c != '=') {
@@ -198,7 +195,7 @@ public class CMinusScanner implements Scanner {
 					type = Token.TokenType.NEQUAL;
 				} break;
 
-				case State.GOT_LESS: {
+				case GOT_LESS: {
 					save = false;
 
 					if((char) c == '=') {
@@ -209,7 +206,7 @@ public class CMinusScanner implements Scanner {
 					}
 				} break;
 
-				case State.GOT_GREATER: {
+				case GOT_GREATER: {
 					save = false;
 
 					if((char) c == '=') {
@@ -220,7 +217,7 @@ public class CMinusScanner implements Scanner {
 					}
 				} break;
 
-				case State.GOT_EQUAL: {
+				case GOT_EQUAL: {
 					save = false;
 
 					if((char) c == '=') {
@@ -231,7 +228,7 @@ public class CMinusScanner implements Scanner {
 					}
 				} break;
 
-				case State.GOT_SLASH: {
+				case GOT_SLASH: {
 					save = false;
 
 					if((char) c != '*') {
@@ -244,7 +241,7 @@ public class CMinusScanner implements Scanner {
 					}
 				} break;
 
-				case State.DOING_COMMENT: {
+				case DOING_COMMENT: {
 					save = false;
 
 					if((char) c == '*') {
@@ -252,7 +249,7 @@ public class CMinusScanner implements Scanner {
 					}
 				} break;
 
-				case State.ENDING_COMMENT: {
+				case ENDING_COMMENT: {
 					save = false;
 
 					if((char) c == '/') {
@@ -263,7 +260,7 @@ public class CMinusScanner implements Scanner {
 					}
 				} break;
 
-				case State.DONE:
+				case DONE:
 				default: {
 					throw new ScannerException("Scanner bug: got into done state without breaking.");
 				}
@@ -303,12 +300,12 @@ public class CMinusScanner implements Scanner {
 				data = null;
 			}
 		}
+		Object obj = data;
 
 		if(type == Token.TokenType.NUM) {
-			data = new Integer(data, 10);
+			obj = new Integer(data);
 		}
-
-		token = new Token(type, data);
+		Token token = new Token(type, obj);
 
 		return token;
 	}

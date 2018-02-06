@@ -16,7 +16,7 @@ public class Token {
 		DIV,
 		LESS,
 		LEQUAL,
-		GREAT,
+		GREATER,
 		GREQUAL,
 		EQUAL,
 		NEQUAL,
@@ -27,8 +27,8 @@ public class Token {
 		RPAREN,
 		LSQUARE,
 		RSQUARE,
-		LBRACE,
-		RBRACE,
+		LCURLY,
+		RCURLY,
 		EOF
 	}
 
