@@ -32,10 +32,13 @@ public class CMinusScanner implements Scanner {
 		START,
 		DOING_NUMBER,
 		DOING_IDENT_OR_KEYWORD,
+		DOING_COMMENT,
+		ENDING_COMMENT,
 		GOT_LESS,
 		GOT_GREATER,
 		GOT_NOT,
 		GOT_EQUAL,
+		GOT_SLASH,
 		DONE,
 	}
 
@@ -89,7 +92,7 @@ public class CMinusScanner implements Scanner {
 
 							case '/': {
 								type = Token.TokenType.DIV;
-								state = State.DONE;
+								state = State.GOT_SLASH;
 							} break;
 
 							case '>': {
@@ -160,6 +163,10 @@ public class CMinusScanner implements Scanner {
 
 				case State.DOING_NUMBER: {
 					if(!Character.isDigit(c)) {
+						if(Character.isLetter(c))
+						{
+							throw new ScannerException("Invalid token: numerical expression expected");
+						}
 						input.reset();
 						type = Token.TokenType.NUM;
 						save = false;
@@ -169,6 +176,10 @@ public class CMinusScanner implements Scanner {
 
 				case State.DOING_IDENT_OR_KEYWORD: {
 					if(!Character.isLetter(c)) {
+						if(Character.isDigit(c))
+						{
+							throw new ScannerException("Invalid token: identifier naming expected");
+						}
 						input.reset();
 						type = Token.TokenType.IDENT;
 						save = false;
@@ -220,7 +231,39 @@ public class CMinusScanner implements Scanner {
 					}
 				} break;
 
-				case State.Done:
+				case State.GOT_SLASH: {
+					save = false;
+
+					if((char) c != '*') {
+						type = Token.TokenType.DIV;
+						state = State.DONE;
+						input.reset();
+					}
+					else {
+						state = State.DOING_COMMENT;
+					}
+				} break;
+
+				case State.DOING_COMMENT: {
+					save = false;
+
+					if((char) c == '*') {
+						state = State.ENDING_COMMENT;
+					}
+				} break;
+
+				case State.ENDING_COMMENT: {
+					save = false;
+
+					if((char) c == '/') {
+						state = State.START;
+					}
+					else {
+						state = State.DOING_COMMENT;
+					}
+				} break;
+
+				case State.DONE:
 				default: {
 					throw new ScannerException("Scanner bug: got into done state without breaking.");
 				}
@@ -278,7 +321,12 @@ public class CMinusScanner implements Scanner {
 
 			Token next;
 			while((next = scanner.getNextToken()).getType() != Token.TokenType.EOF) {
-				System.out.println(next.getType().toString() + ": " + next.getData().toString());
+				if(next.getData() == null) {
+					System.out.println(next.getType().toString());
+				}
+				else {
+					System.out.println(next.getType().toString() + ": " + next.getData().toString());
+				}
 			}
 		}
 		catch(Exception ex) {
