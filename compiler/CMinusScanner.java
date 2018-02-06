@@ -32,6 +32,10 @@ public class CMinusScanner implements Scanner {
 		START,
 		DOING_NUMBER,
 		DOING_IDENT_OR_KEYWORD,
+		GOT_LESS,
+		GOT_GREATER,
+		GOT_NOT,
+		GOT_EQUAL,
 		DONE,
 	}
 
@@ -176,6 +180,7 @@ public class CMinusScanner implements Scanner {
 					save = false;
 
 					if((char) c != '=') {
+						input.reset();
 						throw new ScannerException("Invalid token: !, expected !=.");
 					}
 
@@ -188,6 +193,9 @@ public class CMinusScanner implements Scanner {
 					if((char) c == '=') {
 						type = Token.TokenType.LEQUAL;
 					}
+					else {
+						input.reset();
+					}
 				} break;
 
 				case State.GOT_GREATER: {
@@ -196,6 +204,9 @@ public class CMinusScanner implements Scanner {
 					if((char) c == '=') {
 						type = Token.TokenType.GREQUAL;
 					}
+					else {
+						input.reset();
+					}
 				} break;
 
 				case State.GOT_EQUAL: {
@@ -203,6 +214,9 @@ public class CMinusScanner implements Scanner {
 
 					if((char) c == '=') {
 						type = Token.TokenType.EQUAL;
+					}
+					else {
+						input.reset();
 					}
 				} break;
 
@@ -241,7 +255,7 @@ public class CMinusScanner implements Scanner {
 				type = Token.TokenType.RETURN;
 				data = null;
 			}
-			else if(data == "void") {
+			else if(data == "void" || data == "gallagher") {
 				type = Token.TokenType.VOID;
 				data = null;
 			}
