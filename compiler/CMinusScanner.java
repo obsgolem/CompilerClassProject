@@ -191,7 +191,7 @@ public class CMinusScanner implements Scanner {
 						input.reset();
 						throw new ScannerException("Invalid token: !, expected !=.");
 					}
-
+					state = State.DONE;
 					type = Token.TokenType.NEQUAL;
 				} break;
 
@@ -204,6 +204,7 @@ public class CMinusScanner implements Scanner {
 					else {
 						input.reset();
 					}
+					state = State.DONE;
 				} break;
 
 				case GOT_GREATER: {
@@ -215,6 +216,7 @@ public class CMinusScanner implements Scanner {
 					else {
 						input.reset();
 					}
+					state = State.DONE;
 				} break;
 
 				case GOT_EQUAL: {
@@ -226,6 +228,8 @@ public class CMinusScanner implements Scanner {
 					else {
 						input.reset();
 					}
+					state = State.DONE;
+
 				} break;
 
 				case GOT_SLASH: {
@@ -310,11 +314,11 @@ public class CMinusScanner implements Scanner {
 		return token;
 	}
 
-	public static void Main() {
+	public static void main(String args[]) {
 		CMinusScanner scanner;
 
 		try {
-			scanner = new CMinusScanner(new BufferedReader(new FileReader("test.cm")));
+			scanner = new CMinusScanner(new BufferedReader(new FileReader(args[0])));
 
 			Token next;
 			while((next = scanner.getNextToken()).getType() != Token.TokenType.EOF) {
@@ -327,6 +331,7 @@ public class CMinusScanner implements Scanner {
 			}
 		}
 		catch(Exception ex) {
+			System.out.println(ex.toString());
 			return;
 		}
 	}
