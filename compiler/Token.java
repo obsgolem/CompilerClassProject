@@ -29,7 +29,8 @@ public class Token {
 		RSQUARE,
 		LBRACE,
 		RBRACE,
-		EOF
+		EOF,
+		ERROR
 	}
 
 	private TokenType token_type;

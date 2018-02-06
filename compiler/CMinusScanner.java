@@ -7,12 +7,16 @@ public class CMinusScanner implements Scanner {
 	private BufferedReader input;
 	private Token next_token;
 
+	public class ScannerException extends Exception {
+
+	}
+
 	public CMinusScanner(BufferedReader file) {
 		input = file;
 		next_token = scanToken();
 	}
 
-	public Token getNextToken() {
+	public Token getNextToken() throws ScannerException {
 		Token out = next_token;
 		if(next_token.getType() != Token.TokenType.EOF) {
 			next_token = scanToken();
@@ -26,28 +30,113 @@ public class CMinusScanner implements Scanner {
 
 	private enum State {
 		START,
+		DOING_NUMBER,
+		DOING_IDENT_OR_KEYWORD,
 		DONE,
 	}
 
-	private Token scanToken() {
+	private Boolean isNum(int c) {
+		return ((char) c) >= '0' && ((char) c) <= '9';
+	}
+
+	private Boolean isLetter(int c) {
+		return (((char) c) >= 'a' && ((char) c) <= 'z') || (((char) c) >= 'A' && ((char) c) <= 'Z');
+	}
+
+	private Token scanToken() throws ScannerException {
 		Token.TokenType type;
 		String data = null;
 
 		State state = State.START;
 
 		while(state != State.DONE) {
-			case State.START: {
-				if(c == -1) {
-					type = EOF;
-					state = DONE;
+			// Mark input so we can back up. Use four characters in case of unicode.
+			input.mark(4);
+
+			int c = input.read();
+			Boolean save = true;
+
+			switch(state) {
+				case State.START: {
+					if(c == -1) {
+						type = Token.TokenType.EOF;
+						state = State.DONE;
+					}
+					else if(Character.isDigit(c)) {
+						state = State.DOING_NUMBER;
+					}
+					else if(Character.isLetter(c)) {
+						state = State.DOING_IDENT_OR_KEYWORD;
+					}
+					else if(Character.isWhitespace(c)) {
+						save = false;
+					}
+				} break;
+
+				case State.DOING_NUMBER: {
+					if(!Character.isDigit(c)) {
+						input.reset();
+						type = Token.TokenType.NUM;
+						save = false;
+						state = state.DONE;
+					}
+				} break;
+
+				case State.DOING_IDENT_OR_KEYWORD: {
+					if(!Character.isLetter(c)) {
+						input.reset();
+						type = Token.TokenType.IDENT;
+						save = false;
+						state = state.DONE;
+					}
+				} break;
+
+				case State.Done:
+				default: {
+					throw new ScannerException("Scanner bug: got into done state without breaking.");
 				}
-			} break;
+			}
 
-			case State.Done:
-			default: {
-
+			if(save) {
+				if(data == null) {
+					data = "";
+				}
+				data += (char) c;
 			}
 		}
+
+		if(type == Token.TokenType.IDENT) {
+			if(data == "if") {
+				type = Token.TokenType.IF;
+				data = null;
+			}
+			else if(data == "else") {
+				type = Token.TokenType.ELSE;
+				data = null;
+			}
+			else if(data == "while") {
+				type = Token.TokenType.WHILE;
+				data = null;
+			}
+			else if(data == "int") {
+				type = Token.TokenType.INT;
+				data = null;
+			}
+			else if(data == "return") {
+				type = Token.TokenType.RETURN;
+				data = null;
+			}
+			else if(data == "void") {
+				type = Token.TokenType.VOID;
+				data = null;
+			}
+		}
+
+		if(type == Token.TokenType.NUM) {
+			data = new Integer(data, 10);
+		}
+
+		token = new Token(type, data);
 
 		return token;
 	}
@@ -57,14 +146,14 @@ public class CMinusScanner implements Scanner {
 
 		try {
 			scanner = new CMinusScanner(new BufferedReader(new FileReader("test.cm")));
+
+			Token next;
+			while((next = scanner.getNextToken()).getType() != Token.TokenType.EOF) {
+				System.out.println(next.getType().toString() + ": " + next.getData().toString());
+			}
 		}
 		catch(Exception ex) {
 			return;
-		}
-
-		Token next;
-		while((next = scanner.getNextToken()).getType() != Token.TokenType.EOF) {
-			System.out.println(next.getType().toString() + ": " + next.getData().toString());
 		}
 	}
 }
