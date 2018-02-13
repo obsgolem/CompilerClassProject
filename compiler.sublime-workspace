@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"GOT",
+				"GOT_EQUAL"
+			],
+			[
+				"To",
+				"TokenType"
+			],
+			[
+				"G",
+				"GOT_NOT"
+			],
+			[
+				"T",
+				"TokenType"
+			],
+			[
+				"do",
+				"DONE"
+			],
+			[
+				"Sca",
+				"ScannerException"
+			],
+			[
 				"tok",
 				"token_data"
 			],
@@ -490,30 +514,6 @@
 			[
 				"aliase",
 				"aliased_type"
-			],
-			[
-				"defau",
-				"default_value"
-			],
-			[
-				"alias",
-				"aliased_type"
-			],
-			[
-				"nex",
-				"next_level_index"
-			],
-			[
-				"make",
-				"makeNumericOperation"
-			],
-			[
-				"prev",
-				"prev_level_max"
-			],
-			[
-				"inc",
-				"incrementVoidPointerBySize"
 			]
 		]
 	},
@@ -523,8 +523,7 @@
 			"file": "compiler/Token.java",
 			"settings":
 			{
-				"buffer_size": 507,
-				"encoding": "UTF-8",
+				"buffer_size": 633,
 				"line_ending": "Unix",
 				"name": "public class Token {"
 			}
@@ -542,8 +541,7 @@
 			"file": "compiler/Scanner.java",
 			"settings":
 			{
-				"buffer_size": 108,
-				"encoding": "UTF-8",
+				"buffer_size": 174,
 				"line_ending": "Unix",
 				"name": "public interface Scanner {"
 			}
@@ -552,10 +550,18 @@
 			"file": "compiler/CMinusScanner.java",
 			"settings":
 			{
-				"buffer_size": 774,
-				"encoding": "UTF-8",
+				"buffer_size": 6748,
 				"line_ending": "Unix",
 				"name": "public class CMinusScanner implements Scanner {"
+			}
+		},
+		{
+			"file": "compiler/test.cm",
+			"settings":
+			{
+				"buffer_size": 70,
+				"line_ending": "Unix",
+				"name": "i = 3;"
 			}
 		}
 	],
@@ -812,6 +818,7 @@
 	],
 	"file_history":
 	[
+		"/Users/JosiahBills/Documents/Code/java/Compiler/P1/compiler.sublime-project",
 		"/Users/JosiahBills/Documents/Code/Senior/dolos/Modules/encrypt/Encrypt-POC/Encrypt-POC/Crypt-POC.h",
 		"/Users/JosiahBills/Documents/Code/Senior/dolos/Modules/encrypt/Encrypt-POC/Encrypt-POC/Crypt-POC.c",
 		"/Users/JosiahBills/Documents/Code/Senior/dolos/Modules/encrypt/Encrypt-POC/Encrypt-POC.xcodeproj/project.pbxproj",
@@ -938,12 +945,11 @@
 		"/C/Users/josia_000/Documents/Code/rust/mimsy/Cargo.lock",
 		"/C/Users/josia_000/Documents/Code/rust/mimsy/vorpal/src/window.rs",
 		"/C/Users/josia_000/Documents/Code/rust/freetype-rs/src/bitmap_glyph.rs",
-		"/C/Users/josia_000/Documents/Code/rust/freetype-rs/Cargo.toml",
-		"/C/Users/josia_000/Documents/Code/rust/mimsy/vorpal/Cargo.toml"
+		"/C/Users/josia_000/Documents/Code/rust/freetype-rs/Cargo.toml"
 	],
 	"find":
 	{
-		"height": 38.0
+		"height": 25.0
 	},
 	"find_in_files":
 	{
@@ -957,6 +963,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"println(\"Here\")",
+			"save = false;",
+			"type =",
+			"_token",
+			"_TOKEN"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -974,7 +985,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 4,
 			"sheets":
 			[
 				{
@@ -983,27 +994,28 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 507,
+						"buffer_size": 633,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								17,
-								17
+								136,
+								136
 							]
 						],
 						"settings":
 						{
 							"auto_name": "public class Token {",
-							"syntax": "Packages/Java/Java.sublime-syntax"
+							"syntax": "Packages/Java/Java.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -1031,7 +1043,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -1040,7 +1052,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 108,
+						"buffer_size": 174,
 						"regions":
 						{
 						},
@@ -1060,7 +1072,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -1069,27 +1081,57 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 774,
+						"buffer_size": 6748,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								17,
-								0
+								5034,
+								5034
 							]
 						],
 						"settings":
 						{
 							"auto_name": "public class CMinusScanner implements Scanner {",
-							"syntax": "Packages/Java/Java.sublime-syntax"
+							"syntax": "Packages/Java/Java.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 4564.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "compiler/test.cm",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 70,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6,
+								6
+							]
+						],
+						"settings":
+						{
+							"auto_name": "i = 3;",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
