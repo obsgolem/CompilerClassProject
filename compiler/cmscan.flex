@@ -134,6 +134,7 @@ IntegerLiteral = [0-9]+
 
 <COMMENT> {
   "*/" { yybegin(YYINITIAL); }
+  <<EOF>>                          { throw new ScannerException("Unexpected EOF.");  }
   [^]                              { }
 }
 
