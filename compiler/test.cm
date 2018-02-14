@@ -1,4 +1,22 @@
-i = 3;
-/* lol */
-int void return
-, [ ] { } ( ) != == * / + - <= >= < >
+int main()
+{
+    int n = 5;
+    int i = 0;
+    int factorial = 1;
+
+    /* normally we'd get user input, but I'm not sure how to do that in C- */
+    if (n < 0)
+    {
+        printf("Error! Factorial of a negative number doesn't exist.");
+    }
+
+    else
+    {
+        for(i=1; i<=n; ++i)
+        {
+            factorial = factorial * i;
+        }
+    }
+
+    return factorial;
+}
