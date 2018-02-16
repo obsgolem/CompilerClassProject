@@ -32,7 +32,10 @@ import java.io.IOException;
     return out;
   }
 
-  public Token viewNextToken() {
+  public Token viewNextToken() throws ScannerException, IOException {
+    if(next_token == null) {
+      next_token = yylex();
+    }
     return next_token;
   }
 
