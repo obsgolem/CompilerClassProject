@@ -1,0 +1,32 @@
+expression → var = expression | simple-expression
+var → ID | ID [ expression ]
+simple-expression → additive-expression {relop additive-expression}
+additive-expression → term {addop term}
+term → factor {mulop factor}
+factor → (expression) | var | call | NUM
+call → ID ( args )
+
+expression → ID var = expression | simple-expression
+var → [ expression ] | empty
+simple-expression → additive-expression {relop additive-expression}
+additive-expression → term {addop term}
+term → factor {mulop factor}
+factor → (expression) | vorc | NUM
+call → ( args )
+
+simple-expression → vorc {mulop factor} {addop term} {relop additive-expression}
+
+vorc → ID vorc'
+vorc' → call | var
+
+program → declaration-list
+declaration-list → { declaration }
+declaration → INT ID int-declaration | VOID ID fun-declaration
+int-decl → var-decl | fun-decl
+var-decl → ; | '['NUM']'
+fun-decl → ( params ) compound-stmt
+params → params-list | VOID
+params-list → param {,param}
+param → type-specifier ID ['['']']
+compound-stmt → '{' local-declarations statement-list '}'
+var-declaration 
