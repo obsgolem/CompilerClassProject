@@ -1,10 +1,25 @@
+package compiler;
+
 public class CompoundStatement extends Statement {
 
-    Expression expr;
-    Statement thenStmt;
-    Statement elseStmt;
+	public ArrayList<Declaration.VarDecl> decls;
+	public ArrayList<Statement> statements;
 
-    public CompoundStatement (Expression express, Statement stmt) {
-        // this (express, stmt, null);
+    public CompoundStatement (ArrayList<Declaration.VarDecl> d, ArrayList<Statement> s) {
+    	decls = d;
+    	statements = s;
+    }
+
+    public void printTree(int level) {
+        for(int i = 0; i < level; i++) {
+            System.out.print("\t");
+        }
+        System.out.print("Compound statement");
+        for(Declaration.VarDecl d : decls) {
+        	d.printTree(level+1);
+        }
+        for(Statement s : statements) {
+        	s.printTree(level+1);
+        }
     }
 }
