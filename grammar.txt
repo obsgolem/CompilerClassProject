@@ -1,0 +1,35 @@
+program → declaration-list
+declaration-list → declaration { declaration }
+declaration → INT ID int-declaration | VOID ID fun-declaration
+int-declaration → var-declaration | fun-declaration
+var-declaration → ; | '[' NUM ']'
+fun-declaration → ( params ) compound-statement
+params → params-list | VOID
+params-list → param { , param }
+param → int ID [ '[' ']' ]
+compound-statement → '{' local-declarations statement-list '}'
+local-declarations → { var-declaration }
+statement-list → { statement }
+statement → expression-statement | compound-statement | selection-statement | iteration-statement | return-statement
+expression-statement → expression ; | ;
+selection-statement → if ( expression ) statement [else statement]
+iteration-statement → while ( expression ) statement
+return-statement → return [ expression ];
+
+expression → ID expression' | NUM simple-expression' | ( expression ) simple-expression'
+expression' → = expression | '[' expression ']' expression'' | simple-expression'
+expression'' → = expression | simple-expression'
+simple-expression' → additive-expression' { relop additive-expression }
+additive-expression → term { addop term }
+additive-expression' → term' { addop term }
+term → factor { mulop factor }
+term' → { mulop factor }
+factor → ( expression ) | NUM | ID varcall
+varcall → ( args ) | [ expression ] | empty
+
+args → arg-list | empty
+arg-list → expression { , expression }
+
+addop → +|-
+mulop → * | /
+relop → <= | < | > | >= | == | !=
