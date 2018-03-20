@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-
 class CMinusParser {
 	class ParseException extends Exception {
 		public ParseException(String s) {
@@ -88,12 +87,12 @@ class CMinusParser {
 	}
 
 	public Expression parseExpression() throws ParseException, ScannerException, IOException {
-		Expression expr = new Expression();
+		Expression expr;
 		if(scanner.viewNextToken().getType() == Token.TokenType.IDENT) {
 			Token identifier = getNextToken();
-			parseExpressionP(t);
+			parseExpressionP(identifier);
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.NUM) {
-			expr = parseSimpleExpressionP(new Num((Integer)getNextToken().getData()));
+			expr = parseSimpleExpressionP(new Expression.Num((Integer)getNextToken().getData()));
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
 			getNextToken();
 			expr = parseExpression();
@@ -109,15 +108,15 @@ class CMinusParser {
 		if(scanner.viewNextToken().getType() == Token.TokenType.ASSIGN) {
 			getNextToken();
 			expr = parseExpression();
-			expr = new Assign(new Var((String)identifier.getData()), expr);
+			expr = new Expression.Assign(new Expression.Var((String)identifier.getData()), expr);
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
 			getNextToken();
 			expr = parseExpression();
-			expr = new Var((String)identifier.getData(), expr);
-			consumeToken(Token.TokenType.RSQUARE)
+			expr = new Expression.Var((String)identifier.getData(), expr);
+			consumeToken(Token.TokenType.RSQUARE);
 			expr = parseExpressionPP(expr);
 		} else { 								// TODO: if next is the first set of SE'
-			expr = parseSimpleExpressionP(new Var((String)identifier.getData()));
+			expr = parseSimpleExpressionP(new Expression.Var((String)identifier.getData()));
 		}
 		return expr;
 	}
@@ -126,7 +125,7 @@ class CMinusParser {
 		if(scanner.viewNextToken().getType() == Token.TokenType.ASSIGN) {
 			getNextToken();
 			expr = parseExpression();
-			expr = new Assign((Var)e, expr);
+			expr = new Expression.Assign((Expression.Var)e, expr);
 		} else { 								// TODO: if next is the first set of SE'
 			expr = parseSimpleExpressionP(expr);
 		}
@@ -213,17 +212,16 @@ class CMinusParser {
 			consumeToken(Token.TokenType.RSQUARE);
 
 			return new Expression.Var((String) identifier.getData(), index);
-		} else 
+		} else {
 			return new Expression.Var((String) identifier.getData());
 		}
 	}
 
 	public ArrayList<Expression> parseArgs() throws ParseException, ScannerException, IOException {
-		ArrayList<Expression> args = new Args();
 		// TODO: What do we set args too?
 		// Note, we've switched to arg-list
-
 		// On the first set of expression...
+
 		if(scanner.viewNextToken().getType() == Token.TokenType.IDENT || scanner.viewNextToken().getType() == Token.TokenType.NUM || scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
 			parseExpression();
 			consumeToken(Token.TokenType.RPAREN);
@@ -272,7 +270,7 @@ class CMinusParser {
 		// Munch the end curly.
 		scanner.getNextToken();
 
-		return new CompoundStatement(decls, statements)
+		return new CompoundStatement(decls, statements);
 	}
 
 	private Statement parseStatement() throws ParseException, ScannerException, IOException {

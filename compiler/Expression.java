@@ -1,14 +1,15 @@
 package compiler;
+
 import java.util.ArrayList;
 
 public abstract class Expression {
 
 	public static class Binop extends Expression {
-		public TokenType binop;
+		public Token.TokenType binop;
 		public Expression lexp;
 		public Expression rexp;
 
-		public binop(TokenType op, Expression left, Expression right) {
+		public Binop(Token.TokenType op, Expression left, Expression right) {
 			binop = op;
 			lexp = left;
 			rexp = right;

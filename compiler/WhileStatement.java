@@ -1,3 +1,7 @@
+package compiler;
+
+import java.util.ArrayList;
+
 public class WhileStatement extends Statement {
 
     Expression expr;

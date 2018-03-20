@@ -1,5 +1,7 @@
 package compiler;
 
+import java.util.ArrayList;
+
 public class CompoundStatement extends Statement {
 
 	public ArrayList<Declaration.VarDecl> decls;

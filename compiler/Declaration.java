@@ -33,7 +33,7 @@ public abstract class Declaration {
 			Boolean first = true;
 			for (VarDecl v : params) {
 				if(!first) {
-					s += ", "
+					s += ", ";
 				}
 				s += v.toString();
 			}
