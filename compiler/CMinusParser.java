@@ -32,7 +32,6 @@ class CMinusParser {
 	}
 
 	public ArrayList<Declaration> parseDeclList() throws ParseException, ScannerException, IOException {
-		System.out.println("in parse decl with " + scanner.viewNextToken().getType().toString());
 		ArrayList<Declaration> decls = new ArrayList<Declaration>();
 		while(scanner.viewNextToken().getType() == Token.TokenType.INT || scanner.viewNextToken().getType() == Token.TokenType.VOID) {
 			Token.TokenType decl_type = scanner.getNextToken().getType();
@@ -87,6 +86,149 @@ class CMinusParser {
 		}
 		return decls;
 	}
+
+	public Expression parseExpression() throws ParseException, ScannerException, IOException {
+		Expression expr = new Expression();
+		if(scanner.viewNextToken().getType() == Token.TokenType.IDENT) {
+			getNextToken();
+			parseExpressionP();
+		} else if (scanner.viewNextToken().getType() == Token.TokenType.NUM) {
+			getNextToken();
+			parseSimpleExpressionP();
+		} else if (scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
+			getNextToken();
+			parseExpression();
+			consumeToken(Token.TokenType.RPAREN);
+			parseSimpleExpressionP();
+		}
+
+		return expr;
+	}
+	
+	public void parseExpressionP() throws ParseException, ScannerException, IOException {
+		if(scanner.viewNextToken().getType() == Token.TokenType.ASSIGN) {
+			getNextToken();
+			parseExpression();
+		} else if (scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
+			getNextToken();
+			parseExpression();
+			consumeToken(Token.TokenType.RSQUARE)
+			parseExpressionPP();
+		} else { 								// TODO: if next is the first set of SE'
+			parseSimpleExpressionP();
+		}
+		return;
+	}
+	public void parseExpressionPP() throws ParseException, ScannerException, IOException {
+		if(scanner.viewNextToken().getType() == Token.TokenType.ASSIGN) {
+			getNextToken();
+			parseExpression();
+		} else { 								// TODO: if next is the first set of SE'
+			parseSimpleExpressionP();
+		}
+		return;
+	}
+	public void parseSimpleExpressionP() throws ParseException, ScannerException, IOException {
+		parseAdditiveExpressionP();
+		while(scanner.viewNextToken().getType() == Token.TokenType.LEQUAL || scanner.viewNextToken().getType() == Token.TokenType.LESS || scanner.viewNextToken().getType() == Token.TokenType.GREATER || scanner.viewNextToken().getType() == Token.TokenType.GREQUAL || scanner.viewNextToken().getType() == Token.TokenType.EQUAL || scanner.viewNextToken().getType() == Token.TokenType.NEQUAL)
+		{
+			getNextToken();
+			parseAdditiveExpression();
+		}
+		return;
+	}
+
+	public void parseAdditiveExpression() throws ParseException, ScannerException, IOException {
+		parseTerm();
+		while(scanner.viewNextToken().getType() == Token.TokenType.PLUS || scanner.viewNextToken().getType() == Token.TokenType.MINUS)
+		{
+			getNextToken();
+			parseTerm();
+		}
+		return;
+	}
+
+	public void parseAdditiveExpressionP() throws ParseException, ScannerException, IOException {
+		parseTermP();
+		while(scanner.viewNextToken().getType() == Token.TokenType.PLUS || scanner.viewNextToken().getType() == Token.TokenType.MINUS)
+		{
+			getNextToken();
+			parseTerm();
+		}
+		return;
+	}
+
+	public void parseTerm() throws ParseException, ScannerException, IOException {
+		parseFactor();
+		while(scanner.viewNextToken().getType() == Token.TokenType.MULT || scanner.viewNextToken().getType() == Token.TokenType.DIV)
+		{
+			getNextToken();
+			parseFactor();
+		}
+		return;
+	}
+
+	public void parseTermP() throws ParseException, ScannerException, IOException {
+		while(scanner.viewNextToken().getType() == Token.TokenType.MULT || scanner.viewNextToken().getType() == Token.TokenType.DIV)
+		{
+			getNextToken();
+			parseFactor();
+		}
+		return;
+	}
+
+	public Factor parseFactor() throws ParseException, ScannerException, IOException {
+		Factor fac = new Factor();
+		if(scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
+			getNextToken();
+			parseExpression();
+			consumeToken(Token.TokenType.RPAREN);
+		} else if (scanner.viewNextToken().getType() == Token.TokenType.NUM) {
+			// TODO: Return here? Set factor equal to num's value?
+		} else if (scanner.viewNextToken().getType() == Token.TokenType.IDENT) {
+			getNextToken();
+			parseVarcall();
+		}
+
+		return fac;
+	}
+
+	public Varcall parseVarcall() throws ParseException, ScannerException, IOException {
+		Varcall varc = new Varcall();
+		// TODO: What do we set varc too?
+		if(scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
+			getNextToken();
+			parseArgs();
+			consumeToken(Token.TokenType.RPAREN);
+		} else if (scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
+			getNextToken();
+			parseExpression();
+			consumeToken(Token.TokenType.RSQUARE);
+		} else 
+			varc = null;
+		}
+
+		return varc;
+	}
+
+	public Args parseArgs() throws ParseException, ScannerException, IOException {
+		Args args = new Args();
+		// TODO: What do we set args too?
+		// Note, we've switched to arg-list
+
+		// On the first set of expression...
+		if(scanner.viewNextToken().getType() == Token.TokenType.IDENT || scanner.viewNextToken().getType() == Token.TokenType.NUM || scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
+			parseExpression();
+			consumeToken(Token.TokenType.RPAREN);
+			while(scanner.viewNextToken().getType() == Token.TokenType.COMMA)
+			{
+				getNextToken();
+				parseExpression();
+			}
+		}
+
+		return args;
+	}
 	
 	public static void main(String args[]) {
 		CMinusScanner scanner;
@@ -113,4 +255,35 @@ class CMinusParser {
 			return;
 		}
 	}
+}
+
+{
+		INT,
+		ELSE,
+		IF,
+		WHILE,
+		RETURN,
+		VOID,
+		IDENT,
+		NUM,
+		PLUS,
+		MINUS,
+		MULT,
+		DIV,
+		LESS,
+		LEQUAL,
+		GREATER,
+		GREQUAL,
+		EQUAL,
+		NEQUAL,
+		ASSIGN,
+		SEMI,
+		COMMA,
+		LPAREN,
+		RPAREN,
+		LSQUARE,
+		RSQUARE,
+		LCURLY,
+		RCURLY,
+		EOF
 }
