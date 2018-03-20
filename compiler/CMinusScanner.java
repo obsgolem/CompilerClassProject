@@ -279,27 +279,27 @@ public class CMinusScanner implements Scanner {
 		}
 
 		if(type == Token.TokenType.IDENT) {
-			if(data == "if") {
+			if(data.equals("if")) {
 				type = Token.TokenType.IF;
 				data = null;
 			}
-			else if(data == "else") {
+			else if(data.equals("else")) {
 				type = Token.TokenType.ELSE;
 				data = null;
 			}
-			else if(data == "while") {
+			else if(data.equals("while")) {
 				type = Token.TokenType.WHILE;
 				data = null;
 			}
-			else if(data == "int") {
+			else if(data.equals("int")) {
 				type = Token.TokenType.INT;
 				data = null;
 			}
-			else if(data == "return") {
+			else if(data.equals("return")) {
 				type = Token.TokenType.RETURN;
 				data = null;
 			}
-			else if(data == "void" || data == "gallagher") {
+			else if(data.equals("void")  || data.equals("gallagher")) {
 				type = Token.TokenType.VOID;
 				data = null;
 			}
@@ -312,27 +312,5 @@ public class CMinusScanner implements Scanner {
 		Token token = new Token(type, obj);
 
 		return token;
-	}
-
-	public static void main(String args[]) {
-		CMinusScanner scanner;
-
-		try {
-			scanner = new CMinusScanner(new BufferedReader(new FileReader(args[0])));
-
-			Token next;
-			while((next = scanner.getNextToken()).getType() != Token.TokenType.EOF) {
-				if(next.getData() == null) {
-					System.out.println(next.getType().toString());
-				}
-				else {
-					System.out.println(next.getType().toString() + ": " + next.getData().toString());
-				}
-			}
-		}
-		catch(Exception ex) {
-			System.out.println(ex.toString());
-			return;
-		}
 	}
 }

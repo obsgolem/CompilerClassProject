@@ -8,7 +8,7 @@ public class Declaration {
 		name = s;
 	}
 
-	public class FunDecl extends Declaration {
+	public static class FunDecl extends Declaration {
 		public ArrayList<VarDecl> params;
 
 		public FunDecl(String s, ArrayList<VarDecl> p) {
@@ -17,7 +17,7 @@ public class Declaration {
 		}
 	}
 
-	public class VarDecl extends Declaration {
+	public static class VarDecl extends Declaration {
 		public Integer array_size;
 
 		public VarDecl(String s, Integer a) {
