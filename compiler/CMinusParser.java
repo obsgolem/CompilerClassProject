@@ -90,129 +90,136 @@ class CMinusParser {
 	public Expression parseExpression() throws ParseException, ScannerException, IOException {
 		Expression expr = new Expression();
 		if(scanner.viewNextToken().getType() == Token.TokenType.IDENT) {
-			getNextToken();
-			parseExpressionP();
+			Token identifier = getNextToken();
+			parseExpressionP(t);
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.NUM) {
-			getNextToken();
-			parseSimpleExpressionP();
+			expr = parseSimpleExpressionP(new Num((Integer)getNextToken().getData()));
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
 			getNextToken();
-			parseExpression();
+			expr = parseExpression();
 			consumeToken(Token.TokenType.RPAREN);
-			parseSimpleExpressionP();
+			expr = parseSimpleExpressionP(expr);
 		}
 
 		return expr;
 	}
 	
-	public void parseExpressionP() throws ParseException, ScannerException, IOException {
+	public Expression parseExpressionP(Token identifier) throws ParseException, ScannerException, IOException {
+		Expression expr;
 		if(scanner.viewNextToken().getType() == Token.TokenType.ASSIGN) {
 			getNextToken();
-			parseExpression();
+			expr = parseExpression();
+			expr = new Assign(new Var((String)identifier.getData()), expr);
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
 			getNextToken();
-			parseExpression();
+			expr = parseExpression();
+			expr = new Var((String)identifier.getData(), expr);
 			consumeToken(Token.TokenType.RSQUARE)
-			parseExpressionPP();
+			expr = parseExpressionPP(expr);
 		} else { 								// TODO: if next is the first set of SE'
-			parseSimpleExpressionP();
+			expr = parseSimpleExpressionP(new Var((String)identifier.getData()));
 		}
-		return;
+		return expr;
 	}
-	public void parseExpressionPP() throws ParseException, ScannerException, IOException {
+	public Expression parseExpressionPP(Expression e) throws ParseException, ScannerException, IOException {
+		Expression expr;
 		if(scanner.viewNextToken().getType() == Token.TokenType.ASSIGN) {
 			getNextToken();
-			parseExpression();
+			expr = parseExpression();
+			expr = new Assign((Var)e, expr);
 		} else { 								// TODO: if next is the first set of SE'
-			parseSimpleExpressionP();
+			expr = parseSimpleExpressionP(expr);
 		}
-		return;
+		return expr;
 	}
-	public void parseSimpleExpressionP() throws ParseException, ScannerException, IOException {
-		parseAdditiveExpressionP();
+	public Expression parseSimpleExpressionP(Expression e) throws ParseException, ScannerException, IOException {
+		Expression expr;
+		expr = parseAdditiveExpressionP(e);
 		while(scanner.viewNextToken().getType() == Token.TokenType.LEQUAL || scanner.viewNextToken().getType() == Token.TokenType.LESS || scanner.viewNextToken().getType() == Token.TokenType.GREATER || scanner.viewNextToken().getType() == Token.TokenType.GREQUAL || scanner.viewNextToken().getType() == Token.TokenType.EQUAL || scanner.viewNextToken().getType() == Token.TokenType.NEQUAL)
 		{
 			getNextToken();
 			parseAdditiveExpression();
 		}
-		return;
+		return expr;
 	}
 
-	public void parseAdditiveExpression() throws ParseException, ScannerException, IOException {
-		parseTerm();
+	public Expression parseAdditiveExpression() throws ParseException, ScannerException, IOException {
+		Expression expr;
+		expr = parseTerm();
+		while(scanner.viewNextToken().getType() == Token.TokenType.PLUS || scanner.viewNextToken().getType() == Token.TokenType.MINUS)
+		{
+			expr = new Binop (getNextToken(), expr, parseTerm());
+		}
+		return expr;
+	}
+
+	public Expression parseAdditiveExpressionP(Expression e) throws ParseException, ScannerException, IOException {
+		Expression expr;
+		expr = parseTermP(e);
 		while(scanner.viewNextToken().getType() == Token.TokenType.PLUS || scanner.viewNextToken().getType() == Token.TokenType.MINUS)
 		{
 			getNextToken();
 			parseTerm();
 		}
-		return;
+		return expr;
 	}
 
-	public void parseAdditiveExpressionP() throws ParseException, ScannerException, IOException {
-		parseTermP();
-		while(scanner.viewNextToken().getType() == Token.TokenType.PLUS || scanner.viewNextToken().getType() == Token.TokenType.MINUS)
-		{
-			getNextToken();
-			parseTerm();
-		}
-		return;
-	}
-
-	public void parseTerm() throws ParseException, ScannerException, IOException {
-		parseFactor();
+	public Expression parseTerm() throws ParseException, ScannerException, IOException {
+		Expression expr;
+		expr = parseFactor();
 		while(scanner.viewNextToken().getType() == Token.TokenType.MULT || scanner.viewNextToken().getType() == Token.TokenType.DIV)
 		{
-			getNextToken();
-			parseFactor();
+			expr = new Binop(getNextToken(), expr, parseFactor());
 		}
-		return;
+		return expr;
 	}
 
-	public void parseTermP() throws ParseException, ScannerException, IOException {
+	public void parseTermP(Expression e) throws ParseException, ScannerException, IOException {
+		Expression expr = e;
 		while(scanner.viewNextToken().getType() == Token.TokenType.MULT || scanner.viewNextToken().getType() == Token.TokenType.DIV)
 		{
-			getNextToken();
-			parseFactor();
+			expr = new Binop(getNextToken(), e, parseFactor());
 		}
-		return;
+		return expr;
 	}
 
-	public Factor parseFactor() throws ParseException, ScannerException, IOException {
-		Factor fac = new Factor();
+	public Expression parseFactor() throws ParseException, ScannerException, IOException {
 		if(scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
 			getNextToken();
-			parseExpression();
+			Expression expr = parseExpression();
 			consumeToken(Token.TokenType.RPAREN);
+			return expr;
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.NUM) {
-			// TODO: Return here? Set factor equal to num's value?
+			return new Num((Integer)Token.getData());
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.IDENT) {
-			getNextToken();
-			parseVarcall();
+			Token id = getNextToken();
+			return parseVarcall(id);
+		} else {
+			throw ParseException("Expected token LPAREN, NUM, or IDENT but got " + getNextToken().getType().toString());
 		}
 
-		return fac;
 	}
 
-	public Varcall parseVarcall() throws ParseException, ScannerException, IOException {
-		Varcall varc = new Varcall();
-		// TODO: What do we set varc too?
+	public Expression parseVarcall(Token identifier) throws ParseException, ScannerException, IOException {
 		if(scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
 			getNextToken();
-			parseArgs();
+			ArrayList<Expression> args = parseArgs();
 			consumeToken(Token.TokenType.RPAREN);
+
+			return new Expression.Call((String) identifier.getData(), args);
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
 			getNextToken();
-			parseExpression();
+			Expression index = parseExpression();
 			consumeToken(Token.TokenType.RSQUARE);
-		} else 
-			varc = null;
-		}
 
-		return varc;
+			return new Expression.Var((String) identifier.getData(), index);
+		} else 
+			return new Expression.Var((String) identifier.getData());
+		}
 	}
 
-	public Args parseArgs() throws ParseException, ScannerException, IOException {
-		Args args = new Args();
+	public ArrayList<Expression> parseArgs() throws ParseException, ScannerException, IOException {
+		ArrayList<Expression> args = new Args();
 		// TODO: What do we set args too?
 		// Note, we've switched to arg-list
 
