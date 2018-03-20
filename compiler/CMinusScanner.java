@@ -160,12 +160,12 @@ public class CMinusScanner implements Scanner {
     "\2\0\1\1\2\2\1\3\1\4\1\5\1\6\5\5"+
     "\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16"+
     "\1\17\1\20\1\21\1\1\1\22\1\23\2\24\1\25"+
-    "\2\5\1\26\3\5\1\27\1\30\1\31\1\32\1\33"+
-    "\1\5\1\34\3\5\1\35\1\5\1\36\2\5\1\37"+
-    "\1\40";
+    "\1\26\2\5\1\27\3\5\1\30\1\31\1\32\1\33"+
+    "\1\34\1\5\1\35\3\5\1\36\1\5\1\37\2\5"+
+    "\1\40\1\41";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[54];
+    int [] result = new int[55];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -194,12 +194,12 @@ public class CMinusScanner implements Scanner {
     "\0\330\0\374\0\u0120\0\u0144\0\u0168\0\u018c\0\110\0\110"+
     "\0\110\0\110\0\110\0\110\0\110\0\110\0\u01b0\0\u01d4"+
     "\0\u01f8\0\u021c\0\110\0\110\0\110\0\u0240\0\110\0\u0264"+
-    "\0\u0288\0\264\0\u02ac\0\u02d0\0\u02f4\0\110\0\110\0\110"+
-    "\0\110\0\110\0\u0318\0\264\0\u033c\0\u0360\0\u0384\0\264"+
-    "\0\u03a8\0\264\0\u03cc\0\u03f0\0\264\0\264";
+    "\0\u0288\0\u02ac\0\264\0\u02d0\0\u02f4\0\u0318\0\110\0\110"+
+    "\0\110\0\110\0\110\0\u033c\0\264\0\u0360\0\u0384\0\u03a8"+
+    "\0\264\0\u03cc\0\264\0\u03f0\0\u0414\0\264\0\264";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[54];
+    int [] result = new int[55];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -227,24 +227,24 @@ public class CMinusScanner implements Scanner {
     "\1\10\1\17\1\20\1\21\1\22\1\23\1\24\1\25"+
     "\1\26\1\27\1\30\1\31\1\32\1\33\1\34\5\35"+
     "\1\36\36\35\46\0\1\5\46\0\1\37\44\0\1\10"+
-    "\1\0\16\10\25\0\1\11\42\0\1\10\1\0\1\10"+
-    "\1\40\14\10\24\0\1\10\1\0\4\10\1\41\1\10"+
-    "\1\42\7\10\24\0\1\10\1\0\1\43\15\10\24\0"+
-    "\1\10\1\0\12\10\1\44\3\10\24\0\1\10\1\0"+
-    "\15\10\1\45\54\0\1\46\43\0\1\47\43\0\1\50"+
-    "\43\0\1\51\11\0\1\52\45\0\1\10\1\0\2\10"+
-    "\1\53\13\10\24\0\1\10\1\0\5\10\1\54\10\10"+
-    "\24\0\1\10\1\0\5\10\1\55\10\10\24\0\1\10"+
-    "\1\0\3\10\1\56\12\10\24\0\1\10\1\0\3\10"+
-    "\1\57\12\10\24\0\1\10\1\0\1\60\15\10\24\0"+
-    "\1\10\1\0\10\10\1\61\5\10\24\0\1\10\1\0"+
-    "\13\10\1\62\2\10\24\0\1\10\1\0\1\10\1\63"+
-    "\14\10\24\0\1\10\1\0\7\10\1\64\6\10\24\0"+
-    "\1\10\1\0\1\65\15\10\24\0\1\10\1\0\4\10"+
-    "\1\66\11\10\16\0";
+    "\1\40\16\10\24\0\1\40\1\11\16\40\24\0\1\10"+
+    "\1\40\1\10\1\41\14\10\24\0\1\10\1\40\4\10"+
+    "\1\42\1\10\1\43\7\10\24\0\1\10\1\40\1\44"+
+    "\15\10\24\0\1\10\1\40\12\10\1\45\3\10\24\0"+
+    "\1\10\1\40\15\10\1\46\54\0\1\47\43\0\1\50"+
+    "\43\0\1\51\43\0\1\52\11\0\1\53\45\0\20\40"+
+    "\24\0\1\10\1\40\2\10\1\54\13\10\24\0\1\10"+
+    "\1\40\5\10\1\55\10\10\24\0\1\10\1\40\5\10"+
+    "\1\56\10\10\24\0\1\10\1\40\3\10\1\57\12\10"+
+    "\24\0\1\10\1\40\3\10\1\60\12\10\24\0\1\10"+
+    "\1\40\1\61\15\10\24\0\1\10\1\40\10\10\1\62"+
+    "\5\10\24\0\1\10\1\40\13\10\1\63\2\10\24\0"+
+    "\1\10\1\40\1\10\1\64\14\10\24\0\1\10\1\40"+
+    "\7\10\1\65\6\10\24\0\1\10\1\40\1\66\15\10"+
+    "\24\0\1\10\1\40\4\10\1\67\11\10\16\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[1044];
+    int [] result = new int[1080];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -283,10 +283,10 @@ public class CMinusScanner implements Scanner {
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
     "\2\0\1\11\1\1\1\11\1\1\1\11\7\1\10\11"+
-    "\4\1\3\11\1\1\1\11\6\1\5\11\14\1";
+    "\4\1\3\11\1\1\1\11\7\1\5\11\14\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[54];
+    int [] result = new int[55];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -377,7 +377,10 @@ public class CMinusScanner implements Scanner {
     return out;
   }
 
-  public Token viewNextToken() {
+  public Token viewNextToken() throws ScannerException, IOException {
+    if(next_token == null) {
+      next_token = yylex();
+    }
     return next_token;
   }
 
@@ -722,140 +725,151 @@ public class CMinusScanner implements Scanner {
 
       if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
         zzAtEOF = true;
+            switch (zzLexicalState) {
+            case COMMENT: {
+              throw new ScannerException("Unexpected EOF.");
+            }
+            case 56: break;
+            default:
               {
                 return symbol(Token.TokenType.EOF);
               }
+        }
       }
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { throw new ScannerException("Bad token.");
             }
-          case 33: break;
+          case 34: break;
           case 2: 
             { /* ignore */
             }
-          case 34: break;
+          case 35: break;
           case 3: 
             { return symbol(Token.TokenType.DIV);
             }
-          case 35: break;
+          case 36: break;
           case 4: 
             { return symbol(Token.TokenType.MULT);
             }
-          case 36: break;
+          case 37: break;
           case 5: 
             { return symbol(Token.TokenType.IDENT, yytext());
             }
-          case 37: break;
+          case 38: break;
           case 6: 
             { return symbol(Token.TokenType.NUM, new Integer(yytext()));
             }
-          case 38: break;
+          case 39: break;
           case 7: 
             { return symbol(Token.TokenType.LPAREN);
             }
-          case 39: break;
+          case 40: break;
           case 8: 
             { return symbol(Token.TokenType.RPAREN);
             }
-          case 40: break;
+          case 41: break;
           case 9: 
             { return symbol(Token.TokenType.LCURLY);
             }
-          case 41: break;
+          case 42: break;
           case 10: 
             { return symbol(Token.TokenType.RCURLY);
             }
-          case 42: break;
+          case 43: break;
           case 11: 
             { return symbol(Token.TokenType.LSQUARE);
             }
-          case 43: break;
+          case 44: break;
           case 12: 
             { return symbol(Token.TokenType.RSQUARE);
             }
-          case 44: break;
+          case 45: break;
           case 13: 
             { return symbol(Token.TokenType.SEMI);
             }
-          case 45: break;
+          case 46: break;
           case 14: 
             { return symbol(Token.TokenType.COMMA);
             }
-          case 46: break;
+          case 47: break;
           case 15: 
             { return symbol(Token.TokenType.ASSIGN);
             }
-          case 47: break;
+          case 48: break;
           case 16: 
             { return symbol(Token.TokenType.GREATER);
             }
-          case 48: break;
+          case 49: break;
           case 17: 
             { return symbol(Token.TokenType.LESS);
             }
-          case 49: break;
+          case 50: break;
           case 18: 
             { return symbol(Token.TokenType.PLUS);
             }
-          case 50: break;
+          case 51: break;
           case 19: 
             { return symbol(Token.TokenType.MINUS);
             }
-          case 51: break;
+          case 52: break;
           case 20: 
             { 
             }
-          case 52: break;
+          case 53: break;
           case 21: 
             { yybegin(COMMENT);
             }
-          case 53: break;
-          case 22: 
-            { return symbol(Token.TokenType.IF);
-            }
           case 54: break;
-          case 23: 
-            { return symbol(Token.TokenType.EQUAL);
+          case 22: 
+            { throw new ScannerException("Token mixed letters and numbers.");
             }
           case 55: break;
-          case 24: 
-            { return symbol(Token.TokenType.GREQUAL);
+          case 23: 
+            { return symbol(Token.TokenType.IF);
             }
           case 56: break;
-          case 25: 
-            { return symbol(Token.TokenType.LEQUAL);
+          case 24: 
+            { return symbol(Token.TokenType.EQUAL);
             }
           case 57: break;
-          case 26: 
-            { return symbol(Token.TokenType.NEQUAL);
+          case 25: 
+            { return symbol(Token.TokenType.GREQUAL);
             }
           case 58: break;
-          case 27: 
-            { yybegin(YYINITIAL);
+          case 26: 
+            { return symbol(Token.TokenType.LEQUAL);
             }
           case 59: break;
-          case 28: 
-            { return symbol(Token.TokenType.INT);
+          case 27: 
+            { return symbol(Token.TokenType.NEQUAL);
             }
           case 60: break;
-          case 29: 
-            { return symbol(Token.TokenType.ELSE);
+          case 28: 
+            { yybegin(YYINITIAL);
             }
           case 61: break;
-          case 30: 
-            { return symbol(Token.TokenType.VOID);
+          case 29: 
+            { return symbol(Token.TokenType.INT);
             }
           case 62: break;
-          case 31: 
-            { return symbol(Token.TokenType.WHILE);
+          case 30: 
+            { return symbol(Token.TokenType.ELSE);
             }
           case 63: break;
-          case 32: 
-            { return symbol(Token.TokenType.RETURN);
+          case 31: 
+            { return symbol(Token.TokenType.VOID);
             }
           case 64: break;
+          case 32: 
+            { return symbol(Token.TokenType.WHILE);
+            }
+          case 65: break;
+          case 33: 
+            { return symbol(Token.TokenType.RETURN);
+            }
+          case 66: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

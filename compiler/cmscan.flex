@@ -32,7 +32,10 @@ import java.io.IOException;
     return out;
   }
 
-  public Token viewNextToken() {
+  public Token viewNextToken() throws ScannerException, IOException {
+    if(next_token == null) {
+      next_token = yylex();
+    }
     return next_token;
   }
 
@@ -120,6 +123,8 @@ IntegerLiteral = [0-9]+
   "*"                            { return symbol(Token.TokenType.MULT); }
   "/"                            { return symbol(Token.TokenType.DIV); }
 
+  ([:jletter:]+[0-9]+|[0-9]+[:jletter:]+)+([:jletter:]*|[0-9]*) { throw new ScannerException("Token mixed letters and numbers."); }
+
   {IntegerLiteral}            { return symbol(Token.TokenType.NUM, new Integer(yytext())); }
 
   /* comments */
@@ -134,6 +139,7 @@ IntegerLiteral = [0-9]+
 
 <COMMENT> {
   "*/" { yybegin(YYINITIAL); }
+  <<EOF>>                          { throw new ScannerException("Unexpected EOF.");  }
   [^]                              { }
 }
 
