@@ -26,7 +26,7 @@ class CMinusParser {
 	public ArrayList<Declaration> parseDeclList() throws ParseException {
 		ArrayList<Declaration> decls = new ArrayList<Declaration>();
 		while(scanner.viewNextToken().getType() == Token.TokenType.INT || scanner.viewNextToken().getType() == Token.TokenType.VOID) {
-			Token.TokenType decl_type = scanner.viewNextToken().getType();
+			Token.TokenType decl_type = scanner.getNextToken().getType();
 			Token id = consumeToken(Token.TokenType.ID);
 
 			if(scanner.viewNextToken().getType() == Token.TokenType.SEMI || scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
@@ -36,6 +36,9 @@ class CMinusParser {
 					Token num = consumeToken(Token.TokenType.NUM);
 					size = (Integer) num.getData();
 					consumeToken(Token.TokenType.RSQUARE);
+				}
+				else{
+					scanner.getNextToken();
 				}
 
 				decls.add(new VarDecl((String) id.getData(), size));
@@ -49,13 +52,14 @@ class CMinusParser {
 					while(true) {
 						consumeToken(Token.TokenType.INT);
 						Token param_id = consumeToken(Token.TokenType.ID);
-
+						Integer size = null;
 						if(scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
-							scanner.getNextToken()
+							scanner.getNextToken();
+							size = 0;
 							consumeToken(Token.TokenType.RSQUARE);
 						}
 
-						params.add(new VarDecl((String) param_id.getData(), null));
+						params.add(new VarDecl((String) param_id.getData(), size));
 
 						if(scanner.viewNextToken().getType() != Token.TokenType.COMMA) {
 							break;
