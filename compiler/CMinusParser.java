@@ -1,5 +1,7 @@
 package compiler;
 
+import java.util.ArrayList;
+
 class CMinusParser {
 	class ParseException extends Exception {
 
@@ -18,7 +20,7 @@ class CMinusParser {
 	private Token consumeToken(Token.TokenType type) throws ParseException {
 		Token t = scanner.getNextToken();
 		if(t.getType() != type) {
-			thrown new ParseException("Expected token " + type + ", got" + t.getType());
+			throw new ParseException("Expected token " + type.toString() + ", got" + t.getType().toString());
 		}
 		return t;
 	}
@@ -32,7 +34,7 @@ class CMinusParser {
 			if(scanner.viewNextToken().getType() == Token.TokenType.SEMI || scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
 				Integer size = null;
 				if(scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
-					scanner.getNextToken()
+					scanner.getNextToken();
 					Token num = consumeToken(Token.TokenType.NUM);
 					size = (Integer) num.getData();
 					consumeToken(Token.TokenType.RSQUARE);
@@ -73,7 +75,7 @@ class CMinusParser {
 				decls.add(new FunDecl((String) id.getData(), params));
 			}
 			else {
-				thrown new ParseException("Unexpected token " + scanner.viewNextToken().getType().getType());
+				throw new ParseException("Unexpected token " + scanner.viewNextToken().getType().getType().toString());
 			}
 		}
 	}

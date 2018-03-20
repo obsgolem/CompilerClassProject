@@ -1,3 +1,6 @@
+package compiler;
+import java.util.ArrayList;
+
 public class Declaration {
 	public String name;
 

@@ -1,4 +1,4 @@
-public class IfStatement extends Statement {
+public class WhileStatement extends Statement {
 
     Expression expr;
     Statement thenStmt;
