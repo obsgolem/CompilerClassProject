@@ -2,7 +2,7 @@ program → declaration-list
 declaration-list → declaration { declaration }
 declaration → INT ID int-declaration | VOID ID fun-declaration
 int-declaration → var-declaration | fun-declaration
-var-declaration → ; | '[' NUM ']'
+var-declaration → ; | '[' NUM ']' ;
 fun-declaration → ( params ) compound-statement
 params → params-list | VOID
 params-list → param { , param }
