@@ -50,15 +50,12 @@ class CMinusParser {
 						consumeToken(Token.TokenType.INT);
 						Token param_id = consumeToken(Token.TokenType.ID);
 
-						Integer size = null;
 						if(scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
 							scanner.getNextToken()
-							Token num = consumeToken(Token.TokenType.NUM);
-							size = (Integer) num.getData();
 							consumeToken(Token.TokenType.RSQUARE);
 						}
 
-						params.add(new VarDecl((String) param_id.getData(), size));
+						params.add(new VarDecl((String) param_id.getData(), null));
 
 						if(scanner.viewNextToken().getType() != Token.TokenType.COMMA) {
 							break;
