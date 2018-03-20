@@ -19,10 +19,6 @@ class CMinusParser {
 		scanner = s;
 	}
 
-	public ArrayList<Declaration> parseAll() throws ParseException, ScannerException, IOException {
-		return parseDeclList();
-	}
-
 	private Token consumeToken(Token.TokenType type) throws ParseException, ScannerException, IOException {
 		Token t = scanner.getNextToken();
 		if(t.getType() != type) {
@@ -31,25 +27,25 @@ class CMinusParser {
 		return t;
 	}
 
-	public ArrayList<Declaration> parseDeclList() throws ParseException, ScannerException, IOException {
+
+	public ArrayList<Declaration> parseAll() throws ParseException, ScannerException, IOException {
+		System.out.println("in parse decl with " + scanner.viewNextToken().getType().toString());
 		ArrayList<Declaration> decls = new ArrayList<Declaration>();
+		if(!(scanner.viewNextToken().getType() == Token.TokenType.INT || scanner.viewNextToken().getType() == Token.TokenType.VOID)) {
+			throw new ParseException("C- programs must have at least one decl.");
+		}
+
 		while(scanner.viewNextToken().getType() == Token.TokenType.INT || scanner.viewNextToken().getType() == Token.TokenType.VOID) {
 			Token.TokenType decl_type = scanner.getNextToken().getType();
 			Token id = consumeToken(Token.TokenType.IDENT);
 
 			if(scanner.viewNextToken().getType() == Token.TokenType.SEMI || scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
-				Integer size = null;
-				if(scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
-					scanner.getNextToken();
-					Token num = consumeToken(Token.TokenType.NUM);
-					size = (Integer) num.getData();
-					consumeToken(Token.TokenType.RSQUARE);
+				if(decl_type == Token.TokenType.VOID) {
+					throw new ParseException("Tried to create a variable with type void.");
 				}
-				else{
-					scanner.getNextToken();
-				}
+				Declaration.VarDecl var = parseVariable(decl_type, id);
 
-				decls.add(new Declaration.VarDecl((String) id.getData(), size));
+				decls.add(var);
 			}
 			else if(scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
 				scanner.getNextToken();
@@ -67,7 +63,7 @@ class CMinusParser {
 							consumeToken(Token.TokenType.RSQUARE);
 						}
 
-						params.add(new Declaration.VarDecl((String) param_id.getData(), size));
+						params.add(new Declaration.VarDecl((String) param_id.getData(), Token.TokenType.INT, size));
 
 						if(scanner.viewNextToken().getType() != Token.TokenType.COMMA) {
 							break;
@@ -77,13 +73,17 @@ class CMinusParser {
 				}
 
 				consumeToken(Token.TokenType.RPAREN);
+				CompoundStatement stmt = parseCompound();
 
-				decls.add(new Declaration.FunDecl((String) id.getData(), params));
+				decls.add(new Declaration.FunDecl((String) id.getData(), decl_type, param, stmt));
 			}
 			else {
 				throw new ParseException("Unexpected token " + scanner.viewNextToken().getType().toString());
 			}
 		}
+
+		consumeToken(Token.TokenType.EOF);
+
 		return decls;
 	}
 
@@ -236,6 +236,93 @@ class CMinusParser {
 
 		return args;
 	}
+
+	private Declaration.VarDecl parseVariable(Token.TokenType decl_type, Token id) throws ParseException, ScannerException, IOException {
+		Integer size = null;
+		if(scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
+			scanner.getNextToken();
+			Token num = consumeToken(Token.TokenType.NUM);
+			size = (Integer) num.getData();
+			consumeToken(Token.TokenType.RSQUARE);
+		}
+
+		consumeToken(Token.TokenType.SEMI);
+
+		return new Declaration.VarDecl((String) id.getData(), decl_type, size);
+	}
+
+	private CompoundStatement parseCompound() throws ParseException, ScannerException, IOException {
+		consumeToken(Token.TokenType.LCURLY);
+
+		ArrayList<Declaration.VarDecl> decls = new ArrayList<Declaration.VarDecl>();
+		ArrayList<Statement> statements = new ArrayList<Statement>();
+
+		while(scanner.viewNextToken().getType() == Token.TokenType.INT) {
+			Token.TokenType decl_type = scanner.getNextToken().getType();
+			Token id = consumeToken(Token.TokenType.IDENT);
+
+			Declaration.VarDecl var = parseVariable(decl_type, id);
+		}
+
+		while(scanner.viewNextToken().getType() != Token.TokenType.RCURLY) {
+			Statement stmt = parseStatement();
+			statements.add(stmt);
+		}
+		
+		// Munch the end curly.
+		scanner.getNextToken();
+
+		return new CompoundStatement(decls, statements)
+	}
+
+	private Statement parseStatement() throws ParseException, ScannerException, IOException {
+		if(scanner.viewNextToken().getType() == Token.TokenType.LCURLY) {
+			return parseCompound();
+		}
+		else if(scanner.viewNextToken().getType() == Token.TokenType.IF) {
+			scanner.getNextToken();
+			consumeToken(Token.TokenType.LPAREN);
+			Expression expr = parseExpression();
+			consumeToken(Token.TokenType.RPAREN);
+			Statement if_ = parseStatement();
+			Statement else_ = null;
+			if(scanner.viewNextToken().getType() == Token.TokenType.ELSE) {
+				scanner.getNextToken();
+				else_ = parseStatement();
+			}
+
+			return new IfStatement(expr, if_, else_);
+		}
+		else if(scanner.viewNextToken().getType() == Token.TokenType.WHILE) {
+			scanner.getNextToken();
+			consumeToken(Token.TokenType.LPAREN);
+			Expression expr = parseExpression();
+			consumeToken(Token.TokenType.RPAREN);
+			Statement stmt = parseStatement();
+
+			return new WhileStatement(expr, stmt);
+		}
+		else if(scanner.viewNextToken().getType() == Token.TokenType.RETURN) {
+			scanner.getNextToken();
+			Expression expr = null;
+			if(scanner.viewNextToken().getType() != Token.TokenType.SEMI) {
+				expr = parseExpression();
+			}
+			consumeToken(Token.TokenType.SEMI);
+
+			return new ReturnStatement(expr);
+		}
+		else {
+			Expression expr = null;
+
+			if(scanner.viewNextToken().getType() != Token.TokenType.SEMI) {
+				expr = parseExpression();
+			}
+			consumeToken(Token.TokenType.SEMI);
+
+			return expr;
+		}
+	}
 	
 	public static void main(String args[]) {
 		CMinusScanner scanner;
@@ -262,35 +349,4 @@ class CMinusParser {
 			return;
 		}
 	}
-}
-
-{
-		INT,
-		ELSE,
-		IF,
-		WHILE,
-		RETURN,
-		VOID,
-		IDENT,
-		NUM,
-		PLUS,
-		MINUS,
-		MULT,
-		DIV,
-		LESS,
-		LEQUAL,
-		GREATER,
-		GREQUAL,
-		EQUAL,
-		NEQUAL,
-		ASSIGN,
-		SEMI,
-		COMMA,
-		LPAREN,
-		RPAREN,
-		LSQUARE,
-		RSQUARE,
-		LCURLY,
-		RCURLY,
-		EOF
 }
