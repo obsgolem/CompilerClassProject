@@ -90,7 +90,7 @@ class CMinusParser {
 		Expression expr;
 		if(scanner.viewNextToken().getType() == Token.TokenType.IDENT) {
 			Token identifier = scanner.getNextToken();
-			parseExpressionP(identifier);
+			expr = parseExpressionP(identifier);
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.NUM) {
 			expr = parseSimpleExpressionP(new Expression.Num((Integer)scanner.getNextToken().getData()));
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
@@ -98,6 +98,8 @@ class CMinusParser {
 			expr = parseExpression();
 			consumeToken(Token.TokenType.RPAREN);
 			expr = parseSimpleExpressionP(expr);
+		} else {
+			throw new ParseException("Expected IDENT, NUM, or LPAREN token but got " + scanner.getNextToken().getType().toString());
 		}
 
 		return expr;
@@ -115,6 +117,10 @@ class CMinusParser {
 			expr = new Expression.Var((String)identifier.getData(), expr);
 			consumeToken(Token.TokenType.RSQUARE);
 			expr = parseExpressionPP(expr);
+		} else if (scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
+			scanner.getNextToken();
+			expr = new Expression.Call((String)identifier.getData(), parseArgs());
+			consumeToken(Token.TokenType.RPAREN);
 		} else { 								// TODO: if next is the first set of SE'
 			expr = parseSimpleExpressionP(new Expression.Var((String)identifier.getData()));
 		}
@@ -127,7 +133,7 @@ class CMinusParser {
 			expr = parseExpression();
 			expr = new Expression.Assign((Expression.Var)e, expr);
 		} else { 								// TODO: if next is the first set of SE'
-			expr = parseSimpleExpressionP(expr);
+			expr = parseSimpleExpressionP(e);
 		}
 		return expr;
 	}
@@ -222,16 +228,19 @@ class CMinusParser {
 		// Note, we've switched to arg-list
 		// On the first set of expression...
 
-		if(scanner.viewNextToken().getType() == Token.TokenType.IDENT || scanner.viewNextToken().getType() == Token.TokenType.NUM || scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
-			parseExpression();
+		ArrayList<Expression> args = new ArrayList<Expression>();
+
+		if(scanner.viewNextToken().getType() == Token.TokenType.IDENT || scanner.viewNextToken().getType() == Token.TokenType.NUM) {
+			args.add(parseExpression());
+		} else if (scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
+			args.add(parseExpression());
 			consumeToken(Token.TokenType.RPAREN);
+		}
 			while(scanner.viewNextToken().getType() == Token.TokenType.COMMA)
 			{
 				scanner.getNextToken();
-				parseExpression();
+				args.add(parseExpression());
 			}
-		}
-
 		return args;
 	}
 
