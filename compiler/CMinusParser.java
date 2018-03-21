@@ -74,7 +74,7 @@ class CMinusParser {
 				consumeToken(Token.TokenType.RPAREN);
 				CompoundStatement stmt = parseCompound();
 
-				decls.add(new Declaration.FunDecl((String) id.getData(), decl_type, param, stmt));
+				decls.add(new Declaration.FunDecl((String) id.getData(), decl_type, params, stmt));
 			}
 			else {
 				throw new ParseException("Unexpected token " + scanner.viewNextToken().getType().toString());
@@ -86,15 +86,15 @@ class CMinusParser {
 		return decls;
 	}
 
-	public Expression parseExpression() throws ParseException, ScannerException, IOException {
+	private Expression parseExpression() throws ParseException, ScannerException, IOException {
 		Expression expr;
 		if(scanner.viewNextToken().getType() == Token.TokenType.IDENT) {
-			Token identifier = getNextToken();
+			Token identifier = scanner.getNextToken();
 			parseExpressionP(identifier);
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.NUM) {
-			expr = parseSimpleExpressionP(new Expression.Num((Integer)getNextToken().getData()));
+			expr = parseSimpleExpressionP(new Expression.Num((Integer)scanner.getNextToken().getData()));
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
-			getNextToken();
+			scanner.getNextToken();
 			expr = parseExpression();
 			consumeToken(Token.TokenType.RPAREN);
 			expr = parseSimpleExpressionP(expr);
@@ -103,14 +103,14 @@ class CMinusParser {
 		return expr;
 	}
 	
-	public Expression parseExpressionP(Token identifier) throws ParseException, ScannerException, IOException {
+	private Expression parseExpressionP(Token identifier) throws ParseException, ScannerException, IOException {
 		Expression expr;
 		if(scanner.viewNextToken().getType() == Token.TokenType.ASSIGN) {
-			getNextToken();
+			scanner.getNextToken();
 			expr = parseExpression();
 			expr = new Expression.Assign(new Expression.Var((String)identifier.getData()), expr);
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
-			getNextToken();
+			scanner.getNextToken();
 			expr = parseExpression();
 			expr = new Expression.Var((String)identifier.getData(), expr);
 			consumeToken(Token.TokenType.RSQUARE);
@@ -120,10 +120,10 @@ class CMinusParser {
 		}
 		return expr;
 	}
-	public Expression parseExpressionPP(Expression e) throws ParseException, ScannerException, IOException {
+	private Expression parseExpressionPP(Expression e) throws ParseException, ScannerException, IOException {
 		Expression expr;
 		if(scanner.viewNextToken().getType() == Token.TokenType.ASSIGN) {
-			getNextToken();
+			scanner.getNextToken();
 			expr = parseExpression();
 			expr = new Expression.Assign((Expression.Var)e, expr);
 		} else { 								// TODO: if next is the first set of SE'
@@ -131,83 +131,83 @@ class CMinusParser {
 		}
 		return expr;
 	}
-	public Expression parseSimpleExpressionP(Expression e) throws ParseException, ScannerException, IOException {
+	private Expression parseSimpleExpressionP(Expression e) throws ParseException, ScannerException, IOException {
 		Expression expr;
 		expr = parseAdditiveExpressionP(e);
 		while(scanner.viewNextToken().getType() == Token.TokenType.LEQUAL || scanner.viewNextToken().getType() == Token.TokenType.LESS || scanner.viewNextToken().getType() == Token.TokenType.GREATER || scanner.viewNextToken().getType() == Token.TokenType.GREQUAL || scanner.viewNextToken().getType() == Token.TokenType.EQUAL || scanner.viewNextToken().getType() == Token.TokenType.NEQUAL)
 		{
-			getNextToken();
+			scanner.getNextToken();
 			parseAdditiveExpression();
 		}
 		return expr;
 	}
 
-	public Expression parseAdditiveExpression() throws ParseException, ScannerException, IOException {
+	private Expression parseAdditiveExpression() throws ParseException, ScannerException, IOException {
 		Expression expr;
 		expr = parseTerm();
 		while(scanner.viewNextToken().getType() == Token.TokenType.PLUS || scanner.viewNextToken().getType() == Token.TokenType.MINUS)
 		{
-			expr = new Binop (getNextToken(), expr, parseTerm());
+			expr = new Expression.Binop (scanner.getNextToken().getType(), expr, parseTerm());
 		}
 		return expr;
 	}
 
-	public Expression parseAdditiveExpressionP(Expression e) throws ParseException, ScannerException, IOException {
+	private Expression parseAdditiveExpressionP(Expression e) throws ParseException, ScannerException, IOException {
 		Expression expr;
 		expr = parseTermP(e);
 		while(scanner.viewNextToken().getType() == Token.TokenType.PLUS || scanner.viewNextToken().getType() == Token.TokenType.MINUS)
 		{
-			getNextToken();
+			scanner.getNextToken();
 			parseTerm();
 		}
 		return expr;
 	}
 
-	public Expression parseTerm() throws ParseException, ScannerException, IOException {
+	private Expression parseTerm() throws ParseException, ScannerException, IOException {
 		Expression expr;
 		expr = parseFactor();
 		while(scanner.viewNextToken().getType() == Token.TokenType.MULT || scanner.viewNextToken().getType() == Token.TokenType.DIV)
 		{
-			expr = new Binop(getNextToken(), expr, parseFactor());
+			expr = new Expression.Binop(scanner.getNextToken().getType(), expr, parseFactor());
 		}
 		return expr;
 	}
 
-	public void parseTermP(Expression e) throws ParseException, ScannerException, IOException {
+	public Expression parseTermP(Expression e) throws ParseException, ScannerException, IOException {
 		Expression expr = e;
 		while(scanner.viewNextToken().getType() == Token.TokenType.MULT || scanner.viewNextToken().getType() == Token.TokenType.DIV)
 		{
-			expr = new Binop(getNextToken(), e, parseFactor());
+			expr = new Expression.Binop(scanner.getNextToken().getType(), e, parseFactor());
 		}
 		return expr;
 	}
 
-	public Expression parseFactor() throws ParseException, ScannerException, IOException {
+	private Expression parseFactor() throws ParseException, ScannerException, IOException {
 		if(scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
-			getNextToken();
+			scanner.getNextToken();
 			Expression expr = parseExpression();
 			consumeToken(Token.TokenType.RPAREN);
 			return expr;
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.NUM) {
-			return new Num((Integer)Token.getData());
+			return new Expression.Num((Integer)scanner.getNextToken().getData());
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.IDENT) {
-			Token id = getNextToken();
+			Token id = scanner.getNextToken();
 			return parseVarcall(id);
 		} else {
-			throw ParseException("Expected token LPAREN, NUM, or IDENT but got " + getNextToken().getType().toString());
+			throw new ParseException("Expected token LPAREN, NUM, or IDENT but got " + scanner.getNextToken().getType().toString());
 		}
 
 	}
 
-	public Expression parseVarcall(Token identifier) throws ParseException, ScannerException, IOException {
+	private Expression parseVarcall(Token identifier) throws ParseException, ScannerException, IOException {
 		if(scanner.viewNextToken().getType() == Token.TokenType.LPAREN) {
-			getNextToken();
+			scanner.getNextToken();
 			ArrayList<Expression> args = parseArgs();
 			consumeToken(Token.TokenType.RPAREN);
 
 			return new Expression.Call((String) identifier.getData(), args);
 		} else if (scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
-			getNextToken();
+			scanner.getNextToken();
 			Expression index = parseExpression();
 			consumeToken(Token.TokenType.RSQUARE);
 
@@ -227,7 +227,7 @@ class CMinusParser {
 			consumeToken(Token.TokenType.RPAREN);
 			while(scanner.viewNextToken().getType() == Token.TokenType.COMMA)
 			{
-				getNextToken();
+				scanner.getNextToken();
 				parseExpression();
 			}
 		}

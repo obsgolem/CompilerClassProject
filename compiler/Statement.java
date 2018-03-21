@@ -5,4 +5,9 @@ public abstract class Statement {
     // All other statements inherit this from Statement
     // Or better yet … ArrayList<Statement>
 
+	public void printTree(int level) {
+		for(int i = 0; i < level; i++) {
+            System.out.print("\t");
+        }
+	}
 }

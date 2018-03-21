@@ -2,7 +2,7 @@ package compiler;
 
 import java.util.ArrayList;
 
-public abstract class Expression {
+public abstract class Expression extends Statement {
 
 	public static class Binop extends Expression {
 		public Token.TokenType binop;
@@ -14,6 +14,13 @@ public abstract class Expression {
 			lexp = left;
 			rexp = right;
 		}
+
+		public void printTree(int level) {
+			super.printTree(level);
+			System.out.println("Binary expression " + binop.toString());
+			lexp.printTree(level+1);
+			lexp.printTree(level+1);
+		}
 	}
 
 	public static class Call extends Expression {
@@ -23,6 +30,14 @@ public abstract class Expression {
 		public Call(String n, ArrayList<Expression> a) {
 			name = n;
 			args = a;
+		}
+
+		public void printTree(int level) {
+			super.printTree(level);
+			System.out.println("Call expression: " + name);
+			for(Expression expr : args) {
+				expr.printTree(level+1);
+			}
 		}
 	}
 
@@ -39,6 +54,12 @@ public abstract class Expression {
 			name = n;
 			index = null;
 		}
+
+		public void printTree(int level) {
+			super.printTree(level);
+			System.out.println("Var expression: " + name);
+			index.printTree(level+1);
+		}
 	}
 
 	public static class Assign extends Expression {
@@ -49,6 +70,13 @@ public abstract class Expression {
 			v = vr;
 			val = e;
 		}
+
+		public void printTree(int level) {
+			super.printTree(level);
+			System.out.println("Assign expression: ");
+			v.printTree(level+1);
+			val.printTree(level+1);
+		}
 	}
 
 	public static class Num extends Expression {
@@ -56,6 +84,11 @@ public abstract class Expression {
 
 		public Num(Integer n) {
 			val = n;
+		}
+
+		public void printTree(int level) {
+			super.printTree(level);
+			System.out.println("Num expression: " + val.toString());
 		}
 	}
 }

@@ -13,10 +13,9 @@ public class CompoundStatement extends Statement {
     }
 
     public void printTree(int level) {
-        for(int i = 0; i < level; i++) {
-            System.out.print("\t");
-        }
-        System.out.print("Compound statement");
+        super.printTree(level);
+        
+        System.out.println("Compound statement");
         for(Declaration.VarDecl d : decls) {
         	d.printTree(level+1);
         }

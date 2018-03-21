@@ -11,10 +11,8 @@ public class ReturnStatement extends Statement {
         expr = e;
     }
     public void printTree(int level) {
-        for(int i = 0; i < level; i++) {
-            System.out.print("\t");
-        }
-        System.out.print("Return statement");
+        super.printTree(level);
+        System.out.println("Return statement");
         expr.printTree(level+1);
     }
 }

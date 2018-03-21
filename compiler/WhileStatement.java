@@ -14,10 +14,8 @@ public class WhileStatement extends Statement {
     }
 
     public void printTree(int level) {
-        for(int i = 0; i < level; i++) {
-            System.out.print("\t");
-        }
-        System.out.print("While statement");
+        super.printTree(level);
+        System.out.println("While statement");
         expr.printTree(level+1);
         stmt.printTree(level+1);
     }

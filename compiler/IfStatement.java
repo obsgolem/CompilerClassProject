@@ -19,10 +19,8 @@ public class IfStatement extends Statement {
     }
 
     public void printTree(int level) {
-        for(int i = 0; i < level; i++) {
-            System.out.print("\t");
-        }
-        System.out.print("If statement");
+        super.printTree(level);
+        System.out.println("If statement");
         expr.printTree(level+1);
         thenStmt.printTree(level+1);
         elseStmt.printTree(level+1);

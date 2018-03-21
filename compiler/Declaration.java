@@ -22,20 +22,20 @@ public abstract class Declaration {
 		public CompoundStatement cpd_stmt;
 
 		public FunDecl(String s, Token.TokenType t, ArrayList<VarDecl> p, CompoundStatement c) {
-			super(s);
+			super(s, t);
 			params = p;
 			cpd_stmt = c;
 		}
 
 		public void printTree(int level) {
-			super(level);
+			super.printTree(level);
 			System.out.print("(");
 			Boolean first = true;
 			for (VarDecl v : params) {
 				if(!first) {
-					s += ", ";
+					System.out.print(", ");
 				}
-				s += v.toString();
+				System.out.print(v.toString());
 			}
 			System.out.print(")\n");
 			cpd_stmt.printTree(level+1);
@@ -46,12 +46,12 @@ public abstract class Declaration {
 		public Integer array_size;
 
 		public VarDecl(String s, Token.TokenType t, Integer a) {
-			super(s);
+			super(s, t);
 			array_size = a;
 		}
 
 		public void printTree(int level) {
-			super(level);
+			super.printTree(level);
 			System.out.println("(size = " + (array_size == null ? "Unknown" : array_size) + ")");
 		}
 	}
