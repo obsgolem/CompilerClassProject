@@ -21,14 +21,13 @@ class CMinusParser {
 	private Token consumeToken(Token.TokenType type) throws ParseException, ScannerException, IOException {
 		Token t = scanner.getNextToken();
 		if(t.getType() != type) {
-			throw new ParseException("Expected token " + type.toString() + ", got" + t.getType().toString());
+			throw new ParseException("Expected token " + type.toString() + ", got " + t.getType().toString());
 		}
 		return t;
 	}
 
 
 	public ArrayList<Declaration> parseAll() throws ParseException, ScannerException, IOException {
-		System.out.println("in parse decl with " + scanner.viewNextToken().getType().toString());
 		ArrayList<Declaration> decls = new ArrayList<Declaration>();
 		if(!(scanner.viewNextToken().getType() == Token.TokenType.INT || scanner.viewNextToken().getType() == Token.TokenType.VOID)) {
 			throw new ParseException("C- programs must have at least one decl.");
@@ -142,8 +141,7 @@ class CMinusParser {
 		expr = parseAdditiveExpressionP(e);
 		while(scanner.viewNextToken().getType() == Token.TokenType.LEQUAL || scanner.viewNextToken().getType() == Token.TokenType.LESS || scanner.viewNextToken().getType() == Token.TokenType.GREATER || scanner.viewNextToken().getType() == Token.TokenType.GREQUAL || scanner.viewNextToken().getType() == Token.TokenType.EQUAL || scanner.viewNextToken().getType() == Token.TokenType.NEQUAL)
 		{
-			scanner.getNextToken();
-			parseAdditiveExpression();
+			expr = new Expression.Binop(scanner.getNextToken().getType(), expr, parseAdditiveExpression());
 		}
 		return expr;
 	}
@@ -163,8 +161,7 @@ class CMinusParser {
 		expr = parseTermP(e);
 		while(scanner.viewNextToken().getType() == Token.TokenType.PLUS || scanner.viewNextToken().getType() == Token.TokenType.MINUS)
 		{
-			scanner.getNextToken();
-			parseTerm();
+			expr = new Expression.Binop (scanner.getNextToken().getType(), expr, parseTerm());
 		}
 		return expr;
 	}
@@ -183,7 +180,7 @@ class CMinusParser {
 		Expression expr = e;
 		while(scanner.viewNextToken().getType() == Token.TokenType.MULT || scanner.viewNextToken().getType() == Token.TokenType.DIV)
 		{
-			expr = new Expression.Binop(scanner.getNextToken().getType(), e, parseFactor());
+			expr = new Expression.Binop(scanner.getNextToken().getType(), expr, parseFactor());
 		}
 		return expr;
 	}
@@ -269,6 +266,7 @@ class CMinusParser {
 			Token id = consumeToken(Token.TokenType.IDENT);
 
 			Declaration.VarDecl var = parseVariable(decl_type, id);
+			decls.add(var);
 		}
 
 		while(scanner.viewNextToken().getType() != Token.TokenType.RCURLY) {
@@ -349,7 +347,11 @@ class CMinusParser {
 			// 	}
 			// }
 
-			parser.parseAll();
+			ArrayList<Declaration> prog = parser.parseAll();
+			for(Declaration decl:prog)
+			{
+				decl.printTree(0);
+			}
 		}
 		catch(Exception ex) {
 			System.out.println(ex.toString());

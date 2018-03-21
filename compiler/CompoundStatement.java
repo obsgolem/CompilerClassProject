@@ -20,7 +20,7 @@ public class CompoundStatement extends Statement {
         	d.printTree(level+1);
         }
         for(Statement s : statements) {
-        	s.printTree(level+1);
+            if(s != null) { s.printTree(level+1); }
         }
     }
 }

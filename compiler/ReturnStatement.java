@@ -13,6 +13,6 @@ public class ReturnStatement extends Statement {
     public void printTree(int level) {
         super.printTree(level);
         System.out.println("Return statement");
-        expr.printTree(level+1);
+        if(expr != null) { expr.printTree(level+1); }
     }
 }

@@ -92,12 +92,12 @@ public class CMinusScanner implements Scanner {
 								state = State.GOT_SLASH;
 							} break;
 
-							case '>': {
+							case '<': {
 								type = Token.TokenType.LESS;
 								state = State.GOT_LESS;
 							} break;
 
-							case '<': {
+							case '>': {
 								type = Token.TokenType.GREATER;
 								state = State.GOT_GREATER;
 							} break;

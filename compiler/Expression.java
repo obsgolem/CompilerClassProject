@@ -19,7 +19,7 @@ public abstract class Expression extends Statement {
 			super.printTree(level);
 			System.out.println("Binary expression " + binop.toString());
 			lexp.printTree(level+1);
-			lexp.printTree(level+1);
+			rexp.printTree(level+1);
 		}
 	}
 
@@ -58,7 +58,7 @@ public abstract class Expression extends Statement {
 		public void printTree(int level) {
 			super.printTree(level);
 			System.out.println("Var expression: " + name);
-			index.printTree(level+1);
+			if(index != null) { index.printTree(level+1); }
 		}
 	}
 

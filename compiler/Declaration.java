@@ -34,8 +34,10 @@ public abstract class Declaration {
 			for (VarDecl v : params) {
 				if(!first) {
 					System.out.print(", ");
+				} else {
+					first = false;
 				}
-				System.out.print(v.toString());
+				System.out.print(v.name);
 			}
 			System.out.print(")\n");
 			cpd_stmt.printTree(level+1);
@@ -52,7 +54,7 @@ public abstract class Declaration {
 
 		public void printTree(int level) {
 			super.printTree(level);
-			System.out.println("(size = " + (array_size == null ? "Unknown" : array_size) + ")");
+			System.out.println("(size = " + (array_size == null ? "Not Array" : array_size) + ")");
 		}
 	}
 }

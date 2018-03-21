@@ -17,6 +17,6 @@ public class WhileStatement extends Statement {
         super.printTree(level);
         System.out.println("While statement");
         expr.printTree(level+1);
-        stmt.printTree(level+1);
+        if(stmt != null) { stmt.printTree(level+1); }
     }
 }

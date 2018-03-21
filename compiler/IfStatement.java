@@ -22,7 +22,7 @@ public class IfStatement extends Statement {
         super.printTree(level);
         System.out.println("If statement");
         expr.printTree(level+1);
-        thenStmt.printTree(level+1);
-        elseStmt.printTree(level+1);
+        if(thenStmt != null) { thenStmt.printTree(level+1); }
+        if(elseStmt != null) { elseStmt.printTree(level+1); }
     }
 }
