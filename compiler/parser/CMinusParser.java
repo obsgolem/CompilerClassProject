@@ -1,18 +1,23 @@
-package compiler;
+package parser;
 
 import java.util.ArrayList;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-class CMinusParser {
-	class ParseException extends Exception {
+public class CMinusParser {
+	public class ParseException extends Exception {
 		public ParseException(String s) {
 			super(s);
 		}
 	}
 
 	Scanner scanner;
+
+	public CMinusParser(String s) throws FileNotFoundException, ScannerException, IOException {
+		scanner = new CMinusScanner(new BufferedReader(new FileReader(s)));
+	}
 
 	public CMinusParser(Scanner s) {
 		scanner = s;
@@ -27,7 +32,7 @@ class CMinusParser {
 	}
 
 
-	public ArrayList<Declaration> parseAll() throws ParseException, ScannerException, IOException {
+	public Program parseAll() throws ParseException, ScannerException, IOException {
 		ArrayList<Declaration> decls = new ArrayList<Declaration>();
 		if(!(scanner.viewNextToken().getType() == Token.TokenType.INT || scanner.viewNextToken().getType() == Token.TokenType.VOID)) {
 			throw new ParseException("C- programs must have at least one decl.");
@@ -41,7 +46,7 @@ class CMinusParser {
 				if(decl_type == Token.TokenType.VOID) {
 					throw new ParseException("Tried to create a variable with type void.");
 				}
-				Declaration.VarDecl var = parseVariable(decl_type, id);
+				Declaration.VarDecl var = parseVariable(decl_type, id, true);
 
 				decls.add(var);
 			}
@@ -61,7 +66,7 @@ class CMinusParser {
 							consumeToken(Token.TokenType.RSQUARE);
 						}
 
-						params.add(new Declaration.VarDecl((String) param_id.getData(), Token.TokenType.INT, size));
+						params.add(new Declaration.VarDecl((String) param_id.getData(), Token.TokenType.INT, size, Declaration.VarDecl.VarLocation.PARAM));
 
 						if(scanner.viewNextToken().getType() != Token.TokenType.COMMA) {
 							break;
@@ -71,7 +76,7 @@ class CMinusParser {
 				}
 
 				consumeToken(Token.TokenType.RPAREN);
-				CompoundStatement stmt = parseCompound();
+				CompoundStatement stmt = parseCompound(null);
 
 				decls.add(new Declaration.FunDecl((String) id.getData(), decl_type, params, stmt));
 			}
@@ -82,7 +87,7 @@ class CMinusParser {
 
 		consumeToken(Token.TokenType.EOF);
 
-		return decls;
+		return new Program(decls);
 	}
 
 	private Expression parseExpression() throws ParseException, ScannerException, IOException {
@@ -103,7 +108,7 @@ class CMinusParser {
 
 		return expr;
 	}
-	
+
 	private Expression parseExpressionP(Token identifier) throws ParseException, ScannerException, IOException {
 		Expression expr;
 		if(scanner.viewNextToken().getType() == Token.TokenType.ASSIGN) {
@@ -241,7 +246,7 @@ class CMinusParser {
 		return args;
 	}
 
-	private Declaration.VarDecl parseVariable(Token.TokenType decl_type, Token id) throws ParseException, ScannerException, IOException {
+	private Declaration.VarDecl parseVariable(Token.TokenType decl_type, Token id, boolean global) throws ParseException, ScannerException, IOException {
 		Integer size = null;
 		if(scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
 			scanner.getNextToken();
@@ -252,48 +257,56 @@ class CMinusParser {
 
 		consumeToken(Token.TokenType.SEMI);
 
-		return new Declaration.VarDecl((String) id.getData(), decl_type, size);
+		if(global) {
+
+			return new Declaration.VarDecl((String) id.getData(), decl_type, size, Declaration.VarDecl.VarLocation.GLOBAL);
+		}
+		else {
+			return new Declaration.VarDecl((String) id.getData(), decl_type, size, Declaration.VarDecl.VarLocation.LOCAL);
+		}
 	}
 
-	private CompoundStatement parseCompound() throws ParseException, ScannerException, IOException {
+	private CompoundStatement parseCompound(CompoundStatement parent) throws ParseException, ScannerException, IOException {
 		consumeToken(Token.TokenType.LCURLY);
 
 		ArrayList<Declaration.VarDecl> decls = new ArrayList<Declaration.VarDecl>();
 		ArrayList<Statement> statements = new ArrayList<Statement>();
 
+		CompoundStatement cpd_stmt = new CompoundStatement(decls, statements, parent);
+
 		while(scanner.viewNextToken().getType() == Token.TokenType.INT) {
 			Token.TokenType decl_type = scanner.getNextToken().getType();
 			Token id = consumeToken(Token.TokenType.IDENT);
 
-			Declaration.VarDecl var = parseVariable(decl_type, id);
+			Declaration.VarDecl var = parseVariable(decl_type, id, false);
 			decls.add(var);
 		}
 
 		while(scanner.viewNextToken().getType() != Token.TokenType.RCURLY) {
-			Statement stmt = parseStatement();
+			Statement stmt = parseStatement(cpd_stmt);
 			statements.add(stmt);
 		}
-		
+
 		// Munch the end curly.
 		scanner.getNextToken();
 
-		return new CompoundStatement(decls, statements);
+		return cpd_stmt;
 	}
 
-	private Statement parseStatement() throws ParseException, ScannerException, IOException {
+	private Statement parseStatement(CompoundStatement parent) throws ParseException, ScannerException, IOException {
 		if(scanner.viewNextToken().getType() == Token.TokenType.LCURLY) {
-			return parseCompound();
+			return parseCompound(parent);
 		}
 		else if(scanner.viewNextToken().getType() == Token.TokenType.IF) {
 			scanner.getNextToken();
 			consumeToken(Token.TokenType.LPAREN);
 			Expression expr = parseExpression();
 			consumeToken(Token.TokenType.RPAREN);
-			Statement if_ = parseStatement();
+			Statement if_ = parseStatement(parent);
 			Statement else_ = null;
 			if(scanner.viewNextToken().getType() == Token.TokenType.ELSE) {
 				scanner.getNextToken();
-				else_ = parseStatement();
+				else_ = parseStatement(parent);
 			}
 
 			return new IfStatement(expr, if_, else_);
@@ -303,7 +316,7 @@ class CMinusParser {
 			consumeToken(Token.TokenType.LPAREN);
 			Expression expr = parseExpression();
 			consumeToken(Token.TokenType.RPAREN);
-			Statement stmt = parseStatement();
+			Statement stmt = parseStatement(parent);
 
 			return new WhileStatement(expr, stmt);
 		}
@@ -328,8 +341,8 @@ class CMinusParser {
 			return expr;
 		}
 	}
-	
-	public static void main(String args[]) {
+
+	/*public static void main(String args[]) {
 		CMinusScanner scanner;
 		CMinusParser parser;
 
@@ -357,5 +370,5 @@ class CMinusParser {
 			System.out.println(ex.toString());
 			return;
 		}
-	}
+	}*/
 }

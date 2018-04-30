@@ -1,8 +1,20 @@
+/* Test consume error */
+/*int 3;*/
+/* Test void variable */
+/*void x;*/
+/*Test bad top level token*/
+/*3*/
+
+/*Test good operation*/
 void main()
 {
     int n[10];
     int i;
 
+    /*Test bad expression*/
+    /*i = [];*/
+    /*Test bad factor*/
+    /*i=3+[];*/
 
     n[3] = 5;
     i = 0;

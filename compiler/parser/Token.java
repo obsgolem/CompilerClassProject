@@ -1,4 +1,4 @@
-package compiler;
+package parser;
 
 public class Token {
 	public enum TokenType {
