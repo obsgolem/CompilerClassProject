@@ -19,7 +19,68 @@ public abstract class Expression extends Statement {
 		}
 
 		public Integer genLLCode(Function func, CompoundStatement scope) throws CodeGenerationException {
-			return -1;
+
+		 	Integer left_reg = lexp.genLLCode();
+		 	Integer right_reg = rexp.genLLCode();
+
+			switch(binop) {
+				case Token.TokenType.PLUS :
+					Operation op = new Operation(Operation.OperationType.ADD_I, func.getCurrBlock());
+					break;
+				
+				case Token.TokenType.MINUS :
+					Operation op = new Operation(Operation.OperationType.SUB_I, func.getCurrBlock());
+					break;
+				
+				case Token.TokenType.MULT :
+					Operation op = new Operation(Operation.OperationType.MUL_I, func.getCurrBlock());
+					break;
+				
+				case Token.TokenType.DIV :
+					Operation op = new Operation(Operation.OperationType.DIV_I, func.getCurrBlock());					// Statements
+					break;
+				
+				case Token.TokenType.LESS :
+					Operation op = new Operation(Operation.OperationType.LT, func.getCurrBlock());
+					break;
+				
+				case Token.TokenType.LEQUAL :
+					Operation op = new Operation(Operation.OperationType.LTE, func.getCurrBlock());
+					break;
+				
+				case Token.TokenType.GREATER :
+					Operation op = new Operation(Operation.OperationType.GT, func.getCurrBlock());
+					break;
+				
+				case Token.TokenType.GREQUAL :
+					Operation op = new Operation(Operation.OperationType.GTE, func.getCurrBlock());
+					break;
+				
+				case Token.TokenType.EQUAL :
+					Operation op = new Operation(Operation.OperationType.EQUAL, func.getCurrBlock());
+					break;
+				
+				case Token.TokenType.NEQUAL :
+					Operation op = new Operation(Operation.OperationType.NOT_EQUAL, func.getCurrBlock());
+					break;
+		   
+				// default :
+				// 	 throw error if binop is something else 
+			}		
+			
+			op.setSrcOperand(0, new Operand(Operand.OperandType.REGISTER, right_reg));
+			op.setDestOperand(0, new Operand(Operand.OperandType.REGISTER, left_reg))
+	        func.getCurrBlock().appendOper(op);
+
+	        // Get the return value from retreg.
+			Integer reg = func.getNewRegNum();
+			op = new Operation(Operation.OperationType.ASSIGN, func.getCurrBlock());
+			Operand in = new Operand(Operand.OperandType.MACRO, "RetReg");
+			op.setSrcOperand(0, in);
+			op.setDestOperand(0, new Operand(Operand.OperandType.REGISTER, reg));
+	        func.getCurrBlock().appendOper(op);
+
+			return reg;
 		}
 
 		public void printTree(int level) {
