@@ -114,7 +114,7 @@ public abstract class Expression extends Statement {
 	            i++;
 	        }
 					// Perform the call
-			op = new Operation(Operation.OperationType.CALL, func.getCurrBlock());
+			Operation op = new Operation(Operation.OperationType.CALL, func.getCurrBlock());
 			op.addAttribute(new Attribute("numParams", ((Integer)regs.size()).toString()));
 			op.setSrcOperand(0, new Operand(Operand.OperandType.STRING, name));
 	        func.getCurrBlock().appendOper(op);
@@ -187,7 +187,7 @@ public abstract class Expression extends Statement {
 				Integer reg = func.getNewRegNum();
 				Operand out = new Operand(Operand.OperandType.REGISTER, reg);
 
-				op = new Operation(Operation.OperationType.LOAD_I, func.getCurrBlock());
+				Operation op = new Operation(Operation.OperationType.LOAD_I, func.getCurrBlock());
 				op.setSrcOperand(0, var);
 				op.setSrcOperand(1, new Operand(Operand.OperandType.INTEGER, 0));
 				op.setDestOperand(0, out);
