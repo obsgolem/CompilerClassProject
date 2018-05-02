@@ -187,7 +187,7 @@ public abstract class Expression extends Statement {
 				Integer reg = func.getNewRegNum();
 				Operand out = new Operand(Operand.OperandType.REGISTER, reg);
 
-				op = new Operation(Operation.OperationType.LOAD_I);
+				op = new Operation(Operation.OperationType.LOAD_I, func.getCurrBlock());
 				op.setSrcOperand(0, var);
 				op.setSrcOperand(1, new Operand(Operand.OperandType.INTEGER, 0));
 				op.setDestOperand(0, out);
@@ -230,7 +230,7 @@ public abstract class Expression extends Statement {
 				// If we are assigning to a global or a param, then do a store.
 				Operand out = new Operand(Operand.OperandType.STRING, decl.getName());
 
-				op = new Operation(Operation.OperationType.STORE_I);
+				op = new Operation(Operation.OperationType.STORE_I, func.getCurrBlock());
 
 				op.setSrcOperand(0, vl);
 		        op.setSrcOperand(1, out);
@@ -240,7 +240,7 @@ public abstract class Expression extends Statement {
 				// Else just do an assign.
 				Operand out = new Operand(Operand.OperandType.REGISTER, decl.getRegister());
 
-				op = new Operation(Operation.OperationType.ASSIGN);
+				op = new Operation(Operation.OperationType.ASSIGN, func.getCurrBlock());
 
 				op.setSrcOperand(0, vl);
 		        op.setDestOperand(0, out);
@@ -272,7 +272,7 @@ public abstract class Expression extends Statement {
 			Integer reg = func.getNewRegNum();
 			Operand out = new Operand(Operand.OperandType.REGISTER, reg);
 
-			Operation op = new Operation(Operation.OperationType.ASSIGN);
+			Operation op = new Operation(Operation.OperationType.ASSIGN, func.getCurrBlock());
       op.setSrcOperand(0, new Operand(Operand.OperandType.INTEGER, val));
           op.setDestOperand(0, out);
  
