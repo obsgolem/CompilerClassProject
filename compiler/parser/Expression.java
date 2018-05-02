@@ -28,56 +28,55 @@ public abstract class Expression extends Statement {
 				case PLUS :
 					op.setType(Operation.OperationType.ADD_I);
 					break;
-				
+
 				case MINUS :
 					op.setType(Operation.OperationType.SUB_I);
 					break;
-				
+
 				case MULT :
 					op.setType(Operation.OperationType.MUL_I);
 					break;
-				
+
 				case DIV :
 					op.setType(Operation.OperationType.DIV_I);					// Statements
 					break;
-				
+
 				case LESS :
 					op.setType(Operation.OperationType.LT);
 					break;
-				
+
 				case LEQUAL :
 					op.setType(Operation.OperationType.LTE);
 					break;
-				
+
 				case GREATER :
 					op.setType(Operation.OperationType.GT);
 					break;
-				
+
 				case GREQUAL :
 					op.setType(Operation.OperationType.GTE);
 					break;
-				
+
 				case EQUAL :
 					op.setType(Operation.OperationType.EQUAL);
 					break;
-				
+
 				case NEQUAL :
 					op.setType(Operation.OperationType.NOT_EQUAL);
 					break;
-		   
+
 				// default :
-				// 	 throw error if binop is something else 
-			}		
-			
+				// 	 throw error if binop is something else
+			}
+
 			op.setSrcOperand(0, new Operand(Operand.OperandType.REGISTER, left_reg));
 			op.setSrcOperand(1, new Operand(Operand.OperandType.REGISTER, right_reg));
+			Integer reg = func.getNewRegNum();
+			op.setDestOperand(0, new Operand(Operand.OperandType.REGISTER, reg));
 	        func.getCurrBlock().appendOper(op);
 
 	        // Get the return value from retreg.
-			Integer reg = func.getNewRegNum();
 			// op = new Operation(Operation.OperationType.ASSIGN);
-			op.setDestOperand(0, new Operand(Operand.OperandType.REGISTER, reg));
-	        func.getCurrBlock().appendOper(op);
 
 			return reg;
 		}
@@ -118,7 +117,7 @@ public abstract class Expression extends Statement {
 			op.addAttribute(new Attribute("numParams", ((Integer)regs.size()).toString()));
 			op.setSrcOperand(0, new Operand(Operand.OperandType.STRING, name));
 	        func.getCurrBlock().appendOper(op);
-	    	
+
 
 	        // Get the return value from retreg.
 			Integer reg = func.getNewRegNum();
@@ -275,11 +274,11 @@ public abstract class Expression extends Statement {
 			Operation op = new Operation(Operation.OperationType.ASSIGN, func.getCurrBlock());
       op.setSrcOperand(0, new Operand(Operand.OperandType.INTEGER, val));
           op.setDestOperand(0, out);
- 
+
           func.getCurrBlock().appendOper(op);
       return reg;
     }
- 
+
     public void printTree(int level) {
       super.printTree(level);
       System.out.println("Num expression: " + val.toString());
