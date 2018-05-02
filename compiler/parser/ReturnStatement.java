@@ -13,8 +13,9 @@ public class ReturnStatement extends Statement {
         expr = e;
     }
 
+    // TODO
     public Integer genLLCode(Function func, CompoundStatement scope) throws CodeGenerationException {
-        return -1;
+        return -1; //statments return -1, expr regurn regnum with value
     }
 
     public void printTree(int level) {

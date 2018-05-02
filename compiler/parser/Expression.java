@@ -20,63 +20,62 @@ public abstract class Expression extends Statement {
 
 		public Integer genLLCode(Function func, CompoundStatement scope) throws CodeGenerationException {
 
-		 	Integer left_reg = lexp.genLLCode();
-		 	Integer right_reg = rexp.genLLCode();
+		 	Integer left_reg = lexp.genLLCode(func, scope);
+		 	Integer right_reg = rexp.genLLCode(func, scope);
+		 	Operation op = new Operation(Operation.OperationType.UNKNOWN, func.getCurrBlock());
 
 			switch(binop) {
-				case Token.TokenType.PLUS :
-					Operation op = new Operation(Operation.OperationType.ADD_I, func.getCurrBlock());
+				case PLUS :
+					op.setType(Operation.OperationType.ADD_I);
 					break;
 				
-				case Token.TokenType.MINUS :
-					Operation op = new Operation(Operation.OperationType.SUB_I, func.getCurrBlock());
+				case MINUS :
+					op.setType(Operation.OperationType.SUB_I);
 					break;
 				
-				case Token.TokenType.MULT :
-					Operation op = new Operation(Operation.OperationType.MUL_I, func.getCurrBlock());
+				case MULT :
+					op.setType(Operation.OperationType.MUL_I);
 					break;
 				
-				case Token.TokenType.DIV :
-					Operation op = new Operation(Operation.OperationType.DIV_I, func.getCurrBlock());					// Statements
+				case DIV :
+					op.setType(Operation.OperationType.DIV_I);					// Statements
 					break;
 				
-				case Token.TokenType.LESS :
-					Operation op = new Operation(Operation.OperationType.LT, func.getCurrBlock());
+				case LESS :
+					op.setType(Operation.OperationType.LT);
 					break;
 				
-				case Token.TokenType.LEQUAL :
-					Operation op = new Operation(Operation.OperationType.LTE, func.getCurrBlock());
+				case LEQUAL :
+					op.setType(Operation.OperationType.LTE);
 					break;
 				
-				case Token.TokenType.GREATER :
-					Operation op = new Operation(Operation.OperationType.GT, func.getCurrBlock());
+				case GREATER :
+					op.setType(Operation.OperationType.GT);
 					break;
 				
-				case Token.TokenType.GREQUAL :
-					Operation op = new Operation(Operation.OperationType.GTE, func.getCurrBlock());
+				case GREQUAL :
+					op.setType(Operation.OperationType.GTE);
 					break;
 				
-				case Token.TokenType.EQUAL :
-					Operation op = new Operation(Operation.OperationType.EQUAL, func.getCurrBlock());
+				case EQUAL :
+					op.setType(Operation.OperationType.EQUAL);
 					break;
 				
-				case Token.TokenType.NEQUAL :
-					Operation op = new Operation(Operation.OperationType.NOT_EQUAL, func.getCurrBlock());
+				case NEQUAL :
+					op.setType(Operation.OperationType.NOT_EQUAL);
 					break;
 		   
 				// default :
 				// 	 throw error if binop is something else 
 			}		
 			
-			op.setSrcOperand(0, new Operand(Operand.OperandType.REGISTER, right_reg));
-			op.setDestOperand(0, new Operand(Operand.OperandType.REGISTER, left_reg))
+			op.setSrcOperand(0, new Operand(Operand.OperandType.REGISTER, left_reg));
+			op.setSrcOperand(1, new Operand(Operand.OperandType.REGISTER, right_reg));
 	        func.getCurrBlock().appendOper(op);
 
 	        // Get the return value from retreg.
 			Integer reg = func.getNewRegNum();
-			op = new Operation(Operation.OperationType.ASSIGN, func.getCurrBlock());
-			Operand in = new Operand(Operand.OperandType.MACRO, "RetReg");
-			op.setSrcOperand(0, in);
+			// op = new Operation(Operation.OperationType.ASSIGN);
 			op.setDestOperand(0, new Operand(Operand.OperandType.REGISTER, reg));
 	        func.getCurrBlock().appendOper(op);
 
@@ -109,17 +108,17 @@ public abstract class Expression extends Statement {
 			int i = 0;
 			for(Integer reg:regs) {
 				Operation op = new Operation(Operation.OperationType.PASS, func.getCurrBlock());
-				op.addAttribute(new Attribute("PARAM_NUM", ((Integer)i).toString()));
-				op.setSrcOperand(0, new Operand(Operand.OperandType.REGISTER, reg));
-		        func.getCurrBlock().appendOper(op);
-		        i++;
-			}
-
-			// Perform the call
-			Operation op = new Operation(Operation.OperationType.CALL, func.getCurrBlock());
+		        op.addAttribute(new Attribute("PARAM_NUM", ((Integer)i).toString()));
+		        op.setSrcOperand(0, new Operand(Operand.OperandType.REGISTER, reg));
+	            func.getCurrBlock().appendOper(op);
+	            i++;
+	        }
+					// Perform the call
+			op = new Operation(Operation.OperationType.CALL, func.getCurrBlock());
 			op.addAttribute(new Attribute("numParams", ((Integer)regs.size()).toString()));
 			op.setSrcOperand(0, new Operand(Operand.OperandType.STRING, name));
 	        func.getCurrBlock().appendOper(op);
+	    	
 
 	        // Get the return value from retreg.
 			Integer reg = func.getNewRegNum();
@@ -188,7 +187,7 @@ public abstract class Expression extends Statement {
 				Integer reg = func.getNewRegNum();
 				Operand out = new Operand(Operand.OperandType.REGISTER, reg);
 
-				Operation op = new Operation(Operation.OperationType.LOAD_I, func.getCurrBlock());
+				op = new Operation(Operation.OperationType.LOAD_I);
 				op.setSrcOperand(0, var);
 				op.setSrcOperand(1, new Operand(Operand.OperandType.INTEGER, 0));
 				op.setDestOperand(0, out);
@@ -231,7 +230,7 @@ public abstract class Expression extends Statement {
 				// If we are assigning to a global or a param, then do a store.
 				Operand out = new Operand(Operand.OperandType.STRING, decl.getName());
 
-				op = new Operation(Operation.OperationType.STORE_I, func.getCurrBlock());
+				op = new Operation(Operation.OperationType.STORE_I);
 
 				op.setSrcOperand(0, vl);
 		        op.setSrcOperand(1, out);
@@ -241,7 +240,7 @@ public abstract class Expression extends Statement {
 				// Else just do an assign.
 				Operand out = new Operand(Operand.OperandType.REGISTER, decl.getRegister());
 
-				op = new Operation(Operation.OperationType.ASSIGN, func.getCurrBlock());
+				op = new Operation(Operation.OperationType.ASSIGN);
 
 				op.setSrcOperand(0, vl);
 		        op.setDestOperand(0, out);
@@ -273,17 +272,17 @@ public abstract class Expression extends Statement {
 			Integer reg = func.getNewRegNum();
 			Operand out = new Operand(Operand.OperandType.REGISTER, reg);
 
-			Operation op = new Operation(Operation.OperationType.ASSIGN, func.getCurrBlock());
-			op.setSrcOperand(0, new Operand(Operand.OperandType.INTEGER, val));
-	        op.setDestOperand(0, out);
-
-	        func.getCurrBlock().appendOper(op);
-			return reg;
-		}
-
-		public void printTree(int level) {
-			super.printTree(level);
-			System.out.println("Num expression: " + val.toString());
-		}
-	}
+			Operation op = new Operation(Operation.OperationType.ASSIGN);
+      op.setSrcOperand(0, new Operand(Operand.OperandType.INTEGER, val));
+          op.setDestOperand(0, out);
+ 
+          func.getCurrBlock().appendOper(op);
+      return reg;
+    }
+ 
+    public void printTree(int level) {
+      super.printTree(level);
+      System.out.println("Num expression: " + val.toString());
+    }
+  }
 }
