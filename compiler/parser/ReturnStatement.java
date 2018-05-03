@@ -21,7 +21,7 @@ public class ReturnStatement extends Statement {
 
         // Set value in the retreg
         Integer reg = func.getNewRegNum();
-        op = new Operation(Operation.OperationType.ASSIGN, func.getCurrBlock());
+        Operation op = new Operation(Operation.OperationType.ASSIGN, func.getCurrBlock());
         op.setSrcOperand(0, new Operand(Operand.OperandType.INTEGER, res));
         op.setDestOperand(0, new Operand(Operand.OperandType.MACRO, "RetReg"));
         func.getCurrBlock().appendOper(op);
