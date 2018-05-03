@@ -38,7 +38,7 @@ public abstract class Expression extends Statement {
 					break;
 
 				case DIV :
-					op.setType(Operation.OperationType.DIV_I);					// Statements
+					op.setType(Operation.OperationType.DIV_I);
 					break;
 
 				case LESS :
@@ -74,9 +74,6 @@ public abstract class Expression extends Statement {
 			Integer reg = func.getNewRegNum();
 			op.setDestOperand(0, new Operand(Operand.OperandType.REGISTER, reg));
 	        func.getCurrBlock().appendOper(op);
-
-	        // Get the return value from retreg.
-			// op = new Operation(Operation.OperationType.ASSIGN);
 
 			return reg;
 		}
