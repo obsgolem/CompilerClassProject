@@ -55,26 +55,28 @@ public class CMinusParser {
 
 				ArrayList<Declaration.VarDecl> params = new ArrayList<Declaration.VarDecl>();
 
-				if(scanner.viewNextToken().getType() == Token.TokenType.VOID) {
-					consumeToken(Token.TokenType.VOID);
-				}
-				else if(scanner.viewNextToken().getType() != Token.TokenType.RPAREN) {
-					while(true) {
-						consumeToken(Token.TokenType.INT);
-						Token param_id = consumeToken(Token.TokenType.IDENT);
-						Integer size = null;
-						if(scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
-							scanner.getNextToken();
-							size = 0;
-							consumeToken(Token.TokenType.RSQUARE);
-						}
+				if(scanner.viewNextToken().getType() != Token.TokenType.RPAREN) {
+					if(scanner.viewNextToken().getType() == Token.TokenType.VOID) {
+						consumeToken(Token.TokenType.VOID);
+					}
+					else {
+						while(true) {
+							consumeToken(Token.TokenType.INT);
+							Token param_id = consumeToken(Token.TokenType.IDENT);
+							Integer size = null;
+							if(scanner.viewNextToken().getType() == Token.TokenType.LSQUARE) {
+								scanner.getNextToken();
+								size = 0;
+								consumeToken(Token.TokenType.RSQUARE);
+							}
 
-						params.add(new Declaration.VarDecl((String) param_id.getData(), Token.TokenType.INT, size, Declaration.VarDecl.VarLocation.PARAM));
+							params.add(new Declaration.VarDecl((String) param_id.getData(), Token.TokenType.INT, size, Declaration.VarDecl.VarLocation.PARAM));
 
-						if(scanner.viewNextToken().getType() != Token.TokenType.COMMA) {
-							break;
+							if(scanner.viewNextToken().getType() != Token.TokenType.COMMA) {
+								break;
+							}
+							consumeToken(Token.TokenType.COMMA);
 						}
-						consumeToken(Token.TokenType.COMMA);
 					}
 				}
 
