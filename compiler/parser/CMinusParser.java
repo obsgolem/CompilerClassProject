@@ -55,7 +55,10 @@ public class CMinusParser {
 
 				ArrayList<Declaration.VarDecl> params = new ArrayList<Declaration.VarDecl>();
 
-				if(scanner.viewNextToken().getType() != Token.TokenType.RPAREN) {
+				if(scanner.viewNextToken().getType() == Token.TokenType.VOID) {
+					consumeToken(Token.TokenType.VOID);
+				}
+				else if(scanner.viewNextToken().getType() != Token.TokenType.RPAREN) {
 					while(true) {
 						consumeToken(Token.TokenType.INT);
 						Token param_id = consumeToken(Token.TokenType.IDENT);
